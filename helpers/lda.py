@@ -37,7 +37,6 @@ def get_topic_vector(text, lda, dictionary):
 
     return [x for x in topic_vector]
 
-
 def topic_to_vector(topic, number_of_topics):
 
     vector = np.zeros(number_of_topics)
@@ -70,9 +69,13 @@ def get_lda_model(done_issues_df, number_of_topics):
 	return lda_model, dictionary
 
 def add_experience_topic_vector_to_users(done_issues_df, lda_model, dictionary, number_of_topics):
+
 	user_df = done_issues_df.groupby("assignee.name").agg({'text': 'sum'})
+
 	initial_vector = user_df["text"].apply(get_topic_vector, args=(lda_model,dictionary,))
+
 	user_df["vector"] =initial_vector.apply(topic_to_vector, args=(number_of_topics,))
+
 	return user_df
 
 

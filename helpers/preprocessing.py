@@ -7,7 +7,7 @@ def merge_desc_sum(df):
 	return df
 
 def cols(df):
-	df = df[["created", "assignee.name", "priority", "status.name",	"text", "storypoints", "project", "resolutiondate", 	"description", "summary", "key"]]
+	df = df[["created", "assignee.name", "priority", "status.name",	"text", "storypoints", "project", "resolutiondate", "description", "summary", "key", "businessvalue"]]
 	return df
 
 def fill_story_points(df):
@@ -26,8 +26,13 @@ def get_backlog_issues(df):
 	df = df.loc[(df["assignee.name"].isna()) & (df["resolutiondate"].isna())]
 	return df
 
+def calculate_business_values(df):
+	df['businessvalue'] = df['storypoints'] * df['priority']
+	return df
+
 def preprocess(df):
 	df = map_priorities(df)
+	df = calculate_business_values(df)
 	df = merge_desc_sum(df)
 	df = cols(df)
 	return df
