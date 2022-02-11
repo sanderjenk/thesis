@@ -25,14 +25,13 @@ if __name__ == '__main__':
 	# for idx, topic in lda_model.print_topics(-1):
 	# 	print('Topic: {} \nWords: {}'.format(idx, topic))
 
-	# backlog = lda.add_topic_vector_to_baclog_issues(backlog, lda_model, dictionary, number_of_topics)
+	backlog = lda.add_topic_vector_to_baclog_issues(backlog, lda_model, dictionary, number_of_topics)
 
 	backlog = backlog.iloc[:10]
-	print(len(backlog))
 
 	print(backlog[["storypoints", "businessvalue"]].head(10))
 	
-	# user_df = lda.add_experience_topic_vector_to_users(done, lda_model, dictionary, number_of_topics)
+	user_df = lda.add_experience_topic_vector_to_users(done, lda_model, dictionary, number_of_topics)
 
 	res = nsga2.get_optimization_result(backlog, 5)
 
@@ -40,7 +39,7 @@ if __name__ == '__main__':
 
 	best_solution = h.get_individuals_by_bit_array(backlog, best_solution_indices)
 
-	print("Best solution", best_solution_indices)
-	print("Some important variable", -res.F)
-	print("Is valid solution:", res.pf)
-	print("Best solution", best_solution.head())
+	print("Best solution indices: ", best_solution_indices)
+	print("Best solution: ", best_solution.head())
+	print("Some important variable: ", -res.F)
+	print("Is valid solution: ", res.pf)
