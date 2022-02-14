@@ -18,8 +18,10 @@ def optimize_for_users(backlog, users_df):
 
 		best_solution = h.get_individuals_by_bit_array(backlog, best_solution_indices[0])
 
+		print("items selected count: ", len(best_solution))
 		print("Best solution found: %s" % res.X.astype(int))
-		print("Best solution values: ", best_solution[["storypoints", "businessvalue"]].head(500))
+		print("Best solution values: ")
+		print(best_solution[["storypoints", "businessvalue"]].head())
 		print("storypoints sum: ", best_solution["storypoints"].sum())
 		print("businessvalue sum: ", best_solution["businessvalue"].sum())
 		print("issue_similarity sum: ", best_solution["issue_similarity"].sum())

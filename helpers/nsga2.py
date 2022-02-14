@@ -6,7 +6,6 @@ from pymoo.optimize import minimize
 from pymoo.factory import get_crossover, get_mutation, get_sampling
 from pymoo.visualization.scatter import Scatter
 
-# initial problem that just optimizes for business value
 class Issues(Problem):
     def __init__(self,
                  n_items,  # number of items that can be picked up
