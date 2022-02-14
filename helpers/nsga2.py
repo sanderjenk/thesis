@@ -21,10 +21,6 @@ class Issues(Problem):
         self.B = B
         self.I = I
         self.C = C
-	
-    # def _evaluate(self, x, out, *args, **kwargs):
-    #     out["F"] = -anp.sum(self.P * x, axis=1)
-    #     out["G"] = (anp.sum(self.W * x, axis=1) - self.C)
 
     def _evaluate(self, x, out, *args, **kwargs):
         f1 = - anp.sum(self.B * x, axis=1)
