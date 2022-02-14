@@ -40,9 +40,9 @@ if __name__ == '__main__':
 
 	dataset = pp.preprocess(dataset)
 
-	done = pp.get_done_issues(dataset)
+	done = h.get_done_issues(dataset)
 
-	backlog = pp.get_backlog_issues(dataset)
+	backlog = h.get_backlog_issues(dataset)
 
 	number_of_topics = 5
 

@@ -19,14 +19,6 @@ def map_priorities(df):
 	df["priority"]= df.apply(lambda x: pm.mapPriority(x["project"], x["priority.name"]), axis = 1)
 	return df
 
-def get_done_issues(df):
-	df = df.loc[(df["assignee.name"].notna()) & (df["resolutiondate"].notna())]
-	return df
-
-def get_backlog_issues(df):
-	df = df.loc[(df["assignee.name"].isna()) & (df["resolutiondate"].isna())]
-	return df
-
 def calculate_business_values(df):
 	df['businessvalue'] = df['storypoints'] * df['priority']
 	return df
