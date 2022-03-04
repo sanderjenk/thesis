@@ -72,7 +72,7 @@ def add_experience_topic_vector_to_users(done_issues_df, lda_model, dictionary, 
 
 	grouping = done_issues_df.groupby("assignee.name")
 
-	user_df = grouping.agg({'text': 'sum'})
+	user_df = grouping.agg({'text': 'sum'}).reset_index()
 
 	user_df["issue_count"] = grouping["text"].count()
 

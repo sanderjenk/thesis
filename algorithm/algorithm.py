@@ -5,7 +5,10 @@ import nsga2 as nsga2
 import numpy as np
 import other_helpers as h
 
-def optimize_for_users(backlog, users_df):
+def optimize_for_users(backlog, users_df, project):
+
+	# myfile = open('xyz.csv', 'w')
+
 	for _, user in users_df.iterrows():
 
 		user_experience_vector = user['vector']
@@ -18,6 +21,8 @@ def optimize_for_users(backlog, users_df):
 
 		best_solution = h.get_individuals_by_bit_array(backlog, best_solution_indices[0])
 
+		best_solution[["storypoints", "businessvalue_normalized"]].to_csv("result_example.csv")
+
 		print("items selected count: ", len(best_solution))
 		print("Best solution found: %s" % res.X.astype(int))
 		print("Best solution values: ")
@@ -28,35 +33,43 @@ def optimize_for_users(backlog, users_df):
 		print("Function value: %s" % res.F)
 		print("Constraint violation: %s" % res.CV)
 
+		# myfile.writelines(user["assignee.name"] + "," + str(res.F) + "," + project)
 		# only for first user for now
 		break
 
+	# myfile.close()
 
 if __name__ == '__main__':
 
 	dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
 
-	dataset = dataset.loc[dataset["project"] == "xd"]
-
 	dataset = pp.preprocess(dataset)
 
-	done = h.get_done_issues(dataset)
+	grouped = dataset.groupby("project")
 
-	backlog = h.get_backlog_issues(dataset)
+	for project, df in grouped:
 
-	number_of_topics = 5
+		done = h.get_done_issues(df)
 
-	lda_model, dictionary = lda.get_lda_model(done, number_of_topics)
+		backlog = h.get_backlog_issues(df)
 
-	# print topics
-	# for idx, topic in lda_model.print_topics(-1):
-		# print('Topic: {} \nWords: {}'.format(idx, topic))
+		number_of_topics = 5
 
-	backlog = lda.add_topic_vector_to_baclog_issues(backlog, lda_model, dictionary, number_of_topics)
+		lda_model, dictionary = lda.get_lda_model(done, number_of_topics)
 
-	users_df = lda.add_experience_topic_vector_to_users(done, lda_model, dictionary, number_of_topics)
+		# print topics
+		# for idx, topic in lda_model.print_topics(-1):
+			# print('Topic: {} \nWords: {}'.format(idx, topic))
 
-	optimize_for_users(backlog, users_df)
+		backlog = lda.add_topic_vector_to_baclog_issues(backlog, lda_model, dictionary, number_of_topics)
+
+		users_df = lda.add_experience_topic_vector_to_users(done, lda_model, dictionary, number_of_topics)
+
+		optimize_for_users(backlog, users_df, project)
+
+		break
+
+
 
 
 
