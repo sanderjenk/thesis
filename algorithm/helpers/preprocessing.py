@@ -1,4 +1,4 @@
-import prioritymapper as pm
+from helpers import prioritymapper as pm
 import numpy as np
 
 def merge_desc_sum(df):

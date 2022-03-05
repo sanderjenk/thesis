@@ -1,6 +1,6 @@
 
 import autograd.numpy as anp
-from pymoo.core.problem import Problem, ElementwiseProblem
+from pymoo.core.problem import Problem
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.optimize import minimize
 from pymoo.factory import get_crossover, get_mutation, get_sampling
@@ -45,9 +45,9 @@ def get_optimization_result(storypoints, businessvalue, issue_similarity, max_st
         ('n_gen', 100),
         verbose=False)
 
-    plot = Scatter()
-    plot.add(problem.pareto_front(), plot_type="line", color="black", alpha=0.7)
-    plot.add(res.F, facecolor="none", edgecolor="red")
-    plot.show()
+    # plot = Scatter()
+    # plot.add(problem.pareto_front(), plot_type="line", color="black", alpha=0.7)
+    # plot.add(res.F, facecolor="none", edgecolor="red")
+    # plot.show()
 
     return res

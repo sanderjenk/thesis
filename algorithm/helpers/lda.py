@@ -82,4 +82,12 @@ def add_experience_topic_vector_to_users(done_issues_df, lda_model, dictionary, 
 
 	return user_df
 
-
+def get_user_experience_topic_vector(user_done_issues_df, lda_model, dictionary, number_of_topics):
+    
+    corpus = ' '.join(user_done_issues_df["text"])
+    
+    topic_vector = get_topic_vector(corpus, lda_model, dictionary)
+    
+    topic_vector_correct_format = topic_to_vector(topic_vector, number_of_topics)
+    
+    return topic_vector_correct_format
