@@ -15,7 +15,7 @@ export class IssuesService {
 
   getIssues() {
     // return this.http.get<Issue[]>("../../assets/issues.json");
-    return this.http.get<string[]>("http://api:5000/api/issues").pipe(
+    return this.http.get<string[]>("http://localhost/api/issues").pipe(
       map(x => x.map(y => 
         {    
           console.log(y)
@@ -26,7 +26,7 @@ export class IssuesService {
   }
 
   generateReccommendations(issues: Issue[]) {
-    return this.http.post<string[]>("http://api:5000/api/generate", issues.map(x => x.key)).pipe(
+    return this.http.post<string[]>("http://localhost/api/generate", issues.map(x => x.key)).pipe(
       map(x => x.map(y => 
         {    
           console.log(y)
