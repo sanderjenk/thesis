@@ -1,11 +1,11 @@
 version: '3.7'
 services:
   api:
-    build: ./api
+    build: ./thesis-api
     ports:
         - "5000:5000"
   app:
-    build: ./app
+    build: ./thesis-app
     ports:
         - "4200:80"
   mongodb:
