@@ -21,7 +21,7 @@ mongo = PyMongo(app)
 
 db = mongo.db
 
-dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
+dataset = pd.read_csv('./dataset/jiradataset_issues_xd_v1.4.csv', encoding='utf-8')
 
 dataset = dataset.loc[dataset["project"] == "xd"]
 

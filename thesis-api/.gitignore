@@ -1,1 +1,10 @@
-dataset
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+dataset/*
+!dataset/jiradataset_issues_xd_v1.4.csv
