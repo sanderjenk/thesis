@@ -18,7 +18,6 @@ export class IssuesService {
     return this.http.get<string[]>("/api/issues").pipe(
       map(x => x.map(y => 
         {    
-          console.log(y)
           var issue = JSON.parse(y)
           issue.priority = issue["priority.name"]
           return issue;
@@ -29,7 +28,6 @@ export class IssuesService {
     return this.http.post<string[]>("/api/generate", issues.map(x => x.key)).pipe(
       map(x => x.map(y => 
         {    
-          console.log(y)
           var issue = JSON.parse(y)
           issue.priority = issue["priority.name"]
           return issue;
