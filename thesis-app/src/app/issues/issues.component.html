@@ -1,0 +1,19 @@
+<h1>Select your "history"</h1>
+<mat-accordion>
+	<mat-expansion-panel *ngFor="let issue of issues">
+		<mat-expansion-panel-header>
+			<mat-panel-title>
+				{{ issue.priority }}
+				<br>
+				SP: {{issue.storypoints}}
+			</mat-panel-title>
+			<mat-panel-description>
+				{{issue.summary}}
+			</mat-panel-description>
+		</mat-expansion-panel-header>
+		<p> {{issue.description}}</p>
+		<button mat-flat-button color="primary" (click)="selectIssue(issue)">Assign</button>
+	</mat-expansion-panel>
+</mat-accordion>
+
+<button mat-flat-button color="primary" (click)="navigate()">Finish</button>

@@ -42,5 +42,5 @@ def preprocess(df):
 	df = calculate_business_values(df)
 	df = merge_desc_sum(df)
 	df = normalize_column(df, "businessvalue")
-	df = cols(df)
+	# df = cols(df)
 	return df

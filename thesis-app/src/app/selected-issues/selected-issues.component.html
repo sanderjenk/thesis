@@ -1,0 +1,40 @@
+<div class="issues-container">
+	<mat-accordion>
+		<mat-expansion-panel *ngFor="let issue of selectedIssues">
+			<mat-expansion-panel-header>
+				<mat-panel-title>
+					{{ issue.priority }}
+					<br>
+					SP: {{issue.storypoints}}
+				</mat-panel-title>
+				<mat-panel-description>
+					{{issue.summary}}
+				</mat-panel-description>
+			</mat-expansion-panel-header>
+			<p> {{issue.description}}</p>
+			<button mat-flat-button color="warn" (click)="remove(issue)">Remove</button>
+
+		</mat-expansion-panel>
+	</mat-accordion>
+</div>
+
+<button mat-flat-button color="primary" *ngIf="selectedIssues.length > 0" (click)="generate()">Generate</button>
+
+
+<div class="issues-container">
+	<mat-accordion>
+		<mat-expansion-panel *ngFor="let issue of generatedIssues">
+			<mat-expansion-panel-header>
+				<mat-panel-title>
+					{{ issue.priority }}
+					<br>
+					SP: {{issue.storypoints}}
+				</mat-panel-title>
+				<mat-panel-description>
+					{{issue.summary}}
+				</mat-panel-description>
+			</mat-expansion-panel-header>
+			<p> {{issue.description}}</p>
+		</mat-expansion-panel>
+	</mat-accordion>
+</div>

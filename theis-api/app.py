@@ -25,6 +25,8 @@ dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
 
 dataset = dataset.loc[dataset["project"] == "xd"]
 
+dataset['description'] = dataset['description'].fillna("")
+
 dataset = dataset.iloc[:200]
 
 dataset = pp.preprocess(dataset)
@@ -38,9 +40,7 @@ def issues():
     
     cursor = db.issues.find({})
 
-    json_docs = [json.dumps(doc, default=json_util.default) for doc in cursor]
-
-    return json.dumps(json_docs, default=json_util.default)
+    return get_json_issues_from_cursor (cursor)
 
 
 @app.route('/api/generate', methods=['POST'])
@@ -54,15 +54,28 @@ def generate():
     df = pd.DataFrame.from_dict(issues)
 
     user_issues = df.loc[df['key'].isin(request.json)]
+    
+    print(request.json)
+    
+    print(user_issues.head(5))
 
     solution = alg.generate_solution_for_user(df, user_issues)
     
-    res = solution.to_dict(orient="records")
-    
     cursor = db.issues.find({'key': {'$in': solution["key"].to_numpy().tolist()}})
     
-    json_docs = [json.dumps(doc, default=json_util.default) for doc in cursor]
+    return get_json_issues_from_cursor(cursor)
 
-    # plug in the algorithm
-
+def get_json_issues_from_cursor(cursor):
+    json_docs = []
+    for doc in cursor:
+        ## these assholes are NaN
+        doc.pop('assignee.name', None)
+        doc.pop('resolutiondate', None)
+        doc.pop('resolution.description', None)
+        doc.pop('resolution.name', None)
+        doc.pop('sprint', None)
+        
+        json_docs.append(json.dumps(doc, default=json_util.default))
+        
     return json.dumps(json_docs, default=json_util.default)
+    

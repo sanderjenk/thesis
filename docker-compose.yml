@@ -1,9 +1,13 @@
 version: '3.7'
 services:
   api:
-    build: .
+    build: ./api
     ports:
         - "5000:5000"
+  app:
+    build: ./app
+    ports:
+        - "4200:80"
   mongodb:
     image: mongo:latest
     container_name: mongodb
