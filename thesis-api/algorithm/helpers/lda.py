@@ -1,10 +1,11 @@
 import gensim
 from gensim.utils import simple_preprocess
 from gensim.parsing.preprocessing import STOPWORDS
+from gensim.models import CoherenceModel
 from nltk.stem import WordNetLemmatizer, SnowballStemmer
 from nltk.stem.porter import *
-import nltk
-nltk.download('wordnet')
+# import nltk
+# nltk.download('wordnet')
 import numpy as np
 
 # past and future tenses to present, third person to first person
@@ -58,15 +59,23 @@ def get_lda_model(done_issues_df, number_of_topics):
 
 	preprocessed_docs = get_preprocessed_docs(done_issues_df)
 
-	dictionary = gensim.corpora.Dictionary(preprocessed_docs) 
+	dictionary = get_dictionary(preprocessed_docs) 
 
 	dictionary.filter_extremes(no_below=15, no_above=0.7, keep_n=100000)
 
-	bow_corpus = [dictionary.doc2bow(doc) for doc in preprocessed_docs]
+	bow_corpus = get_bow_corpus(dictionary, preprocessed_docs)
 
 	lda_model = gensim.models.LdaMulticore(bow_corpus, num_topics=number_of_topics, id2word=dictionary, passes=2, workers=2)
 
 	return lda_model, dictionary
+
+def get_dictionary(preprocessed_docs):
+    
+    return gensim.corpora.Dictionary(preprocessed_docs) 
+
+def get_bow_corpus(dictionary, preprocessed_docs):
+    
+    return [dictionary.doc2bow(doc) for doc in preprocessed_docs]
 
 def add_experience_topic_vector_to_users(done_issues_df, lda_model, dictionary, number_of_topics):
 
@@ -91,3 +100,36 @@ def get_user_experience_topic_vector(user_done_issues_df, lda_model, dictionary,
     topic_vector_correct_format = topic_to_vector(topic_vector, number_of_topics)
     
     return topic_vector_correct_format
+
+def get_coherence_value(corpus, dictionary, lemmatized_data, k, a, b):
+    
+    lda_model = gensim.models.LdaMulticore(corpus=corpus,
+                                           id2word=dictionary,
+                                           num_topics=k, 
+                                           random_state=100,
+                                           chunksize=100,
+                                           passes=10,
+                                           alpha=a,
+                                           eta=b)
+    
+    coherence_model_lda = CoherenceModel(model=lda_model, texts=lemmatized_data, dictionary=dictionary, coherence='c_v')
+    
+    return coherence_model_lda.get_coherence()
+
+def get_parameter_lists():
+    # Topics range
+    min_topics = 2
+    max_topics = 11
+    step_size = 1
+    topics_range = range(min_topics, max_topics, step_size)
+
+    # Alpha parameter
+    alpha = list(np.arange(0.01, 1, 0.3))
+    alpha.append('symmetric')
+    alpha.append('asymmetric')
+
+    # Beta parameter
+    beta = list(np.arange(0.01, 1, 0.3))
+    beta.append('symmetric')
+    
+    return topics_range, alpha, beta
