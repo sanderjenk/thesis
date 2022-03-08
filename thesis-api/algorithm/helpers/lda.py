@@ -55,7 +55,7 @@ def add_topic_vector_to_baclog_issues(backlog, lda_model, dictionary, number_of_
 
 	return backlog
 
-def get_lda_model(done_issues_df, number_of_topics):
+def get_lda_model(done_issues_df, number_of_topics, alpha, beta):
 
 	preprocessed_docs = get_preprocessed_docs(done_issues_df)
 
@@ -65,7 +65,7 @@ def get_lda_model(done_issues_df, number_of_topics):
 
 	bow_corpus = get_bow_corpus(dictionary, preprocessed_docs)
 
-	lda_model = gensim.models.LdaMulticore(bow_corpus, num_topics=number_of_topics, id2word=dictionary, passes=2, workers=2)
+	lda_model = gensim.models.LdaMulticore(bow_corpus, num_topics=number_of_topics, id2word=dictionary, passes=2, workers=2, alpha=alpha, eta=beta)
 
 	return lda_model, dictionary
 
