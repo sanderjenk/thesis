@@ -9,6 +9,8 @@ import { SelectedIssuesComponent } from './selected-issues/selected-issues.compo
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialExampleModule } from './material.module';
 import { NavbarComponent } from './navbar/navbar.component';
+import { ProjectsComponent } from './projects/projects.component';
+import { IntroComponent } from './intro/intro.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +18,8 @@ import { NavbarComponent } from './navbar/navbar.component';
     IssuesComponent,
     SelectedIssuesComponent,
     NavbarComponent,
+    ProjectsComponent,
+    IntroComponent,
   ],
   imports: [
     BrowserModule,

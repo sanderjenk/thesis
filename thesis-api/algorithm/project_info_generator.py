@@ -6,6 +6,7 @@ if __name__ == '__main__':
 	projects = issues.groupby("project")
 	
 	project_names = []
+ 
 	for project, _ in projects: 
      
 		project_names.append(project.upper())
@@ -15,5 +16,9 @@ if __name__ == '__main__':
 	projects = projects[projects['Project Key'].isin(project_names)]
  
 	projects = projects[["Project Key", "Description", "Jira URL", "Git URL" ,"Programing language", "Purpose", "Reference", "Developer"]]
+ 
+	projects.columns = projects.columns.str.replace(' ', '_')
+ 
+	projects.columns = projects.columns.str.lower()
  
 	pd.DataFrame(projects).to_csv('./dataset/project_info.csv', index=False)

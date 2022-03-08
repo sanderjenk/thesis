@@ -1,0 +1,48 @@
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="dataSource.length > 0">
+
+	<ng-container matColumnDef="project_key">
+	  <th mat-header-cell *matHeaderCellDef> Project key </th>
+	  <td mat-cell *matCellDef="let project"> {{project.project_key}} </td>
+	</ng-container>
+  
+	<ng-container matColumnDef="description">
+	  <th mat-header-cell *matHeaderCellDef> Description </th>
+	  <td mat-cell *matCellDef="let project"> {{project.description}} </td>
+	</ng-container>
+  
+	<ng-container matColumnDef="jira_url">
+	  <th mat-header-cell *matHeaderCellDef> JIRA URL </th>
+	  <td mat-cell *matCellDef="let project"> {{project.jira_url}} </td>
+	</ng-container>
+  
+	<ng-container matColumnDef="git_url">
+	  <th mat-header-cell *matHeaderCellDef> Git URL  </th>
+	  <td mat-cell *matCellDef="let project"> {{project.git_url}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="programing_language">
+		<th mat-header-cell *matHeaderCellDef> Programming language </th>
+		<td mat-cell *matCellDef="let project"> {{project.programing_language}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="purpose">
+		<th mat-header-cell *matHeaderCellDef> Purpose </th>
+		<td mat-cell *matCellDef="let project"> {{project.purpose}} </td>
+	</ng-container>
+
+	<ng-container matColumnDef="buttons">
+		<th mat-header-cell *matHeaderCellDef> Action </th>
+		<td mat-cell *matCellDef="let project"> 		
+			<button mat-flat-button color="primary" (click)="selectProject(project.project_key)">Choose</button>
+		</td>
+	</ng-container>
+  
+	<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+	<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  
+  
+  
+  <!-- Copyright 2022 Google LLC. All Rights Reserved.
+	  Use of this source code is governed by an MIT-style license that
+	  can be found in the LICENSE file at https://angular.io/license -->

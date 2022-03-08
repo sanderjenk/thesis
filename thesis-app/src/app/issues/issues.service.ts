@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Issue } from './issue';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { map } from 'rxjs';
+import { Issue } from './issue';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +11,13 @@ export class IssuesService {
 
   public issueHistorySubject = new BehaviorSubject<Issue[]>([]);
 
+  public selectedProjectSubject = new BehaviorSubject<string>("");
+
+  public generatedIssuesSubject = new BehaviorSubject<Issue[]>([]);
+
   constructor(private http: HttpClient) { }
 
   getIssues() {
-    // return this.http.get<Issue[]>("../../assets/issues.json");
     return this.http.get<string[]>("/api/issues").pipe(
       map(x => x.map(y => 
         {    
@@ -22,6 +25,11 @@ export class IssuesService {
           issue.priority = issue["priority.name"]
           return issue;
         })));
+  }
+
+  getProjects() {
+    return this.http.get<string[]>("http://localhost:5000/api/projects").pipe(
+      map(x => x.map(y => JSON.parse(y))));
   }
 
   generateReccommendations(issues: Issue[]) {
@@ -56,5 +64,11 @@ export class IssuesService {
     history.splice(index, 1);
 
     this.issueHistorySubject.next(history);
+  }
+
+  selectProject(key: string) {
+    this.selectedProjectSubject.next(key);
+    this.issueHistorySubject.next([])
+    this.generatedIssuesSubject.next([])
   }
 }

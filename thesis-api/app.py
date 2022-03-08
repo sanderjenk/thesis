@@ -13,7 +13,7 @@ import algorithm.helpers.preprocessing as pp
 
 app = Flask(__name__)
 
-app.config["MONGO_URI"] = "mongodb://mongodb:27017/thesis"
+app.config["MONGO_URI"] = "mongodb://localhost:27017/thesis"
 
 CORS(app)
 
