@@ -35,13 +35,20 @@ db.issues.delete_many({})
 
 db.issues.insert_many(dataset.to_dict(orient="records"))
 
+@app.route('/api/projects')
+def projects():
+    projects = pd.read_csv("./dataset/project_info.csv", encoding="utf-8")
+    
+    projects = projects.to_dict(orient="records")
+    
+    return get_json(projects)
+
 @app.route('/api/issues')
 def issues():
     
     cursor = db.issues.find({})
 
-    return get_json_issues_from_cursor (cursor)
-
+    return get_json(cursor, True)
 
 @app.route('/api/generate', methods=['POST'])
 def generate():
@@ -59,21 +66,25 @@ def generate():
     
     print(user_issues.head(5))
 
-    solution = alg.generate_solution_for_user(df, user_issues)
+    solution = alg.generate_solution_for_user(df, user_issues, 15)
     
     cursor = db.issues.find({'key': {'$in': solution["key"].to_numpy().tolist()}})
     
-    return get_json_issues_from_cursor(cursor)
+    return get_json(cursor, True)
 
-def get_json_issues_from_cursor(cursor):
+def get_json(cursor, issues = False):
+    
     json_docs = []
+    
     for doc in cursor:
-        ## these assholes are NaN
-        doc.pop('assignee.name', None)
-        doc.pop('resolutiondate', None)
-        doc.pop('resolution.description', None)
-        doc.pop('resolution.name', None)
-        doc.pop('sprint', None)
+        
+        if (issues):
+            ## these assholes can be NaN
+            doc.pop('assignee.name', None)
+            doc.pop('resolutiondate', None)
+            doc.pop('resolution.description', None)
+            doc.pop('resolution.name', None)
+            doc.pop('sprint', None)
         
         json_docs.append(json.dumps(doc, default=json_util.default))
         
