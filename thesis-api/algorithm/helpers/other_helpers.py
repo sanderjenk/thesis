@@ -25,13 +25,30 @@ def cosine_similarity(vector1, vector2):
     return 1 - spatial.distance.cosine(vector1, vector2)
 
 def get_hyperparameters(project):
-
-    df = pd.read_csv('./lda_tuning_results/' + project + '_lda_tuning_results.csv', encoding='utf-8')
+    
+    df = pd.read_csv('./algorithm/lda_tuning_results/' + project + '_lda_tuning_results.csv', encoding='utf-8')
 
     index = df['Coherence'].idxmax()
 
     row = df.iloc[index]
-    
-    return row["Topics"], row["Alpha"], row["Beta"]
+
+    topics = row["Topics"]
+
+    alpha = row["Alpha"]
+
+    try:
+        alpha = float(alpha)
+    except ValueError:
+        print("Alpha is string")
+
+    beta = row["Beta"]
+
+    try:
+        beta = float(beta)
+        
+    except ValueError:
+        print("Beta is string")
+
+    return topics, alpha, beta
 
 
