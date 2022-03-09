@@ -1,4 +1,6 @@
-<div class="issues-container">
+<mat-card>Hello and welcome to my crib</mat-card>
+
+<div class="issues-container" style="margin-bottom: 20px;">
 	<mat-accordion multi>
 		<mat-expansion-panel *ngFor="let issue of selectedIssues">
 			<mat-expansion-panel-header>
@@ -18,10 +20,13 @@
 	</mat-accordion>
 </div>
 
-<button mat-flat-button color="primary" *ngIf="selectedIssues.length > 0" (click)="generate()">Generate</button>
-
+<button style="margin-bottom: 20px;" mat-flat-button color="primary" 
+	*ngIf="selectedIssues.length > 0" (click)="generate()" 
+	[disabled]="selectedIssuesCount < 0">Generate recommendations
+</button>
 
 <div class="issues-container">
+	<h2>Feedback</h2>
 	<mat-accordion multi>
 		<mat-expansion-panel *ngFor="let issue of generatedIssues">
 			<mat-expansion-panel-header>
@@ -38,3 +43,21 @@
 		</mat-expansion-panel>
 	</mat-accordion>
 </div>
+<form [formGroup]="feedbackForm" (ngSubmit)="submit()" *ngIf="generatedIssues.length > -1">
+	<label id="example-radio-group-label">1. How pleased are you with the recommended sprint plan</label>
+	<mat-radio-group class="example-radio-group" style="margin-bottom: 20px;" aria-label="Select an option" formControlName="rating">
+		<mat-radio-button class="example-radio-button" value="1">1</mat-radio-button>
+		<mat-radio-button class="example-radio-button" value="2">2</mat-radio-button>
+		<mat-radio-button class="example-radio-button" value="3">3</mat-radio-button>
+		<mat-radio-button class="example-radio-button" value="4">4</mat-radio-button>
+		<mat-radio-button class="example-radio-button" value="5">5</mat-radio-button>
+		<mat-radio-button class="example-radio-button" value="6">6</mat-radio-button>
+		<mat-radio-button class="example-radio-button" value="7">7</mat-radio-button>
+		<mat-radio-button class="example-radio-button" value="8">8</mat-radio-button>
+		<mat-radio-button class="example-radio-button" value="9">9</mat-radio-button>
+		<mat-radio-button class="example-radio-button" value="10">10</mat-radio-button>
+	</mat-radio-group>
+
+	<button style="margin-bottom: 20px;" type="submit" mat-flat-button color="primary" [disabled]="!feedbackForm.valid">Submit</button>
+
+</form>

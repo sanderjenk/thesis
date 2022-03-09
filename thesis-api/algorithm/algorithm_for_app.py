@@ -49,7 +49,6 @@ if __name__ == '__main__':
 
 	issues_done_by_user = dataset.iloc[:10]
  
- 
 	dataset = pp.preprocess(dataset)
  
 	issues_done_by_user = pp.preprocess(issues_done_by_user)

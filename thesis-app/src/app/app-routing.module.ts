@@ -7,10 +7,24 @@ import { ProjectsComponent } from './projects/projects.component';
 import { SelectedIssuesComponent } from './selected-issues/selected-issues.component';
 
 const routes: Routes = [
-  { path: '', component: IntroComponent },
-  { path: 'issues', component: IssuesComponent, canActivate: [ProjectGuard] },
-  { path: 'selected', component: SelectedIssuesComponent, canActivate: [ProjectGuard]},
-  { path: 'projects', component: ProjectsComponent },
+  { 
+    path: '', 
+    component: IntroComponent 
+  },
+  { 
+    path: 'issues', 
+    component: IssuesComponent, 
+    // canActivate: [ProjectGuard] 
+  },
+  { 
+    path: 'selected', 
+    component: SelectedIssuesComponent, 
+    // canActivate: [ProjectGuard]
+},
+  { 
+    path: 'projects', 
+    component: ProjectsComponent 
+  },
 ];
 
 @NgModule({

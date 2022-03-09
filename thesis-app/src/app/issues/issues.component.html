@@ -1,4 +1,16 @@
-<h1>Select your "history"</h1>
+<mat-card>Select the issues that you 
+	<ul>
+		<li>Understand</li>
+		<li>Would like to work on</li>
+	</ul>
+	These issues act as your issue completion history. 
+	Recommendation algorithm will take them into account when recommending upcoming sprint plan
+
+	<br>
+
+	Please select at least 5 issues
+</mat-card>
+<button mat-flat-button color="primary" (click)="navigate()" [disabled]="selectedIssuesCount == 5" style="margin-bottom: 20px;">Finish</button>
 <mat-accordion multi>
 	<mat-expansion-panel *ngFor="let issue of issues">
 		<mat-expansion-panel-header>

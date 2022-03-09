@@ -18,7 +18,7 @@ export class IssuesService {
   constructor(private http: HttpClient) { }
 
   getIssues() {
-    return this.http.get<string[]>("/api/issues").pipe(
+    return this.http.get<string[]>("http://localhost:5000/api/issues").pipe(
       map(x => x.map(y => 
         {    
           var issue = JSON.parse(y)
@@ -33,13 +33,15 @@ export class IssuesService {
   }
 
   generateReccommendations(issues: Issue[]) {
-    return this.http.post<string[]>("/api/generate", issues.map(x => x.key)).pipe(
+    this.http.post<string[]>("http://localhost:5000/api/generate", issues.map(x => x.key)).pipe(
       map(x => x.map(y => 
         {    
           var issue = JSON.parse(y)
           issue.priority = issue["priority.name"]
           return issue;
-        })));
+        }))).subscribe((issues: Issue[]) => {
+          this.generatedIssuesSubject.next(issues);
+        });
   }
 
   addIssueToHistory(issue: Issue) {
@@ -70,5 +72,9 @@ export class IssuesService {
     this.selectedProjectSubject.next(key);
     this.issueHistorySubject.next([])
     this.generatedIssuesSubject.next([])
+  }
+
+  submitFeedbackForm(data: any) {
+    return this.http.post("http://localhost:5000/api/feedback", data)
   }
 }

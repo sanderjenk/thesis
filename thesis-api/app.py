@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 import pandas as pd
 from flask_pymongo import PyMongo
 import json
@@ -71,6 +71,14 @@ def generate():
     cursor = db.issues.find({'key': {'$in': solution["key"].to_numpy().tolist()}})
     
     return get_json(cursor, True)
+
+@app.route('/api/feedback', methods=['POST'])
+def feedback():
+    print(request.json)
+    
+    db.feedback.insert_one(request.json)
+
+    return Response(status=201)
 
 def get_json(cursor, issues = False):
     

@@ -9,7 +9,7 @@ import { IssuesService } from './issues.service';
   styleUrls: ['./issues.component.css'],
 })
 export class IssuesComponent implements OnInit {
-
+  selectedIssuesCount = 0;
   issues: Issue[] = []
   constructor(
     private issuesService: IssuesService,
@@ -19,6 +19,7 @@ export class IssuesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getIssues();
+    this.getSelectedIssuesCount();
   }
 
   getIssues() {
@@ -33,5 +34,9 @@ export class IssuesComponent implements OnInit {
 
   navigate() {
     this.router.navigate(["../selected"], {relativeTo: this.route})
+  }
+
+  getSelectedIssuesCount() {
+    this.issuesService.issueHistorySubject.subscribe(x => this.selectedIssuesCount = x.length);
   }
 }
