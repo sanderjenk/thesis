@@ -32,6 +32,6 @@ export class IssuesComponent implements OnInit {
   }
 
   navigate() {
-    this.router.navigate(["selected"], {relativeTo: this.route})
+    this.router.navigate(["../selected"], {relativeTo: this.route})
   }
 }
