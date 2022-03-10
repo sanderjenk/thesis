@@ -21,19 +21,15 @@ mongo = PyMongo(app)
 
 db = mongo.db
 
-dataset = pd.read_csv('./dataset/jiradataset_issues_xd_v1.4.csv', encoding='utf-8')
-
-dataset = dataset.loc[dataset["project"] == "xd"]
+dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
 
 dataset['description'] = dataset['description'].fillna("")
 
-dataset = dataset.iloc[:200]
-
 dataset = pp.preprocess(dataset)
 
-db.issues.delete_many({})
+# db.issues.delete_many({})
 
-db.issues.insert_many(dataset.to_dict(orient="records"))
+# db.issues.insert_many(dataset.to_dict(orient="records"))
 
 @app.route('/api/projects')
 def projects():
@@ -45,10 +41,27 @@ def projects():
 
 @app.route('/api/issues')
 def issues():
-    
-    cursor = db.issues.find({})
-
+    print(request.args)
+    project = request.args["project"]
+    queryString = request.args["queryString"]
+    pageSize = int(request.args["pageSize"])
+    pageNumber = int(request.args["pageNumber"])
+    cursor = db.issues \
+        .find({"project": {"$eq": project}, "text": {"$regex" : queryString}}) \
+        .skip((pageNumber-1) * pageSize) \
+        .limit(pageSize)
     return get_json(cursor, True)
+
+
+@app.route('/api/issuescount')
+def issuesCount():
+    print(request.args)
+    project = request.args["project"]
+    queryString = request.args["queryString"]
+    count = db.issues \
+        .count_documents({"project": {"$eq": project}, "text": {"$regex" : queryString}}) \
+            
+    return str(count)
 
 @app.route('/api/generate', methods=['POST'])
 def generate():
@@ -62,10 +75,6 @@ def generate():
 
     user_issues = df.loc[df['key'].isin(request.json)]
     
-    print(request.json)
-    
-    print(user_issues.head(5))
-
     solution = alg.generate_solution_for_user(df, user_issues, 15)
     
     cursor = db.issues.find({'key': {'$in': solution["key"].to_numpy().tolist()}})

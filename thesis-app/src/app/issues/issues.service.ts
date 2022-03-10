@@ -17,14 +17,20 @@ export class IssuesService {
 
   constructor(private http: HttpClient) { }
 
-  getIssues() {
-    return this.http.get<string[]>("http://localhost:5000/api/issues").pipe(
+  getIssues(params: any) {
+    params.project = this.selectedProjectSubject.value.toLowerCase();
+    return this.http.get<string[]>("http://localhost:5000/api/issues", {params: params}).pipe(
       map(x => x.map(y => 
         {    
           var issue = JSON.parse(y)
           issue.priority = issue["priority.name"]
           return issue;
         })));
+  }
+
+  getIssuesCount(params: any) {
+    params.project = this.selectedProjectSubject.value.toLowerCase();
+    return this.http.get<number>("http://localhost:5000/api/issuescount", {params: params});
   }
 
   getProjects() {

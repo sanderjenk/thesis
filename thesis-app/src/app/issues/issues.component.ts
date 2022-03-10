@@ -10,7 +10,12 @@ import { IssuesService } from './issues.service';
 })
 export class IssuesComponent implements OnInit {
   selectedIssuesCount = 0;
-  issues: Issue[] = []
+  issues: Issue[] = [];
+  pageNumber: number = 1;
+  pageSize: number = 20;
+  totalCount: number = 0;
+  queryString: string = "";
+
   constructor(
     private issuesService: IssuesService,
     private route: ActivatedRoute,
@@ -19,13 +24,23 @@ export class IssuesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getIssues();
+    this.getIssuesCount();
     this.getSelectedIssuesCount();
   }
 
   getIssues() {
-    this.issuesService.getIssues().subscribe((issues) => {
+    let params = {
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize,
+      queryString: this.queryString
+    }
+    this.issuesService.getIssues(params).subscribe((issues) => {
       this.issues = issues;
     })
+  }
+
+  getIssuesCount() {
+    this.issuesService.getIssuesCount({queryString:this.queryString}).subscribe(x => this.totalCount = x)
   }
 
   selectIssue(issue: Issue) {
@@ -38,5 +53,17 @@ export class IssuesComponent implements OnInit {
 
   getSelectedIssuesCount() {
     this.issuesService.issueHistorySubject.subscribe(x => this.selectedIssuesCount = x.length);
+  }
+
+  search() {
+    this.getIssues();
+    this.getIssuesCount();
+  }
+
+  pageChanged($event: any) {
+    this.pageSize = $event.pageSize;
+    this.pageNumber = $event.pageIndex + 1;
+    this.getIssues();
+    this.getIssuesCount();
   }
 }
