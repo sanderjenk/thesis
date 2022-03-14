@@ -23,13 +23,13 @@ def get_best_solution_for_user(backlog, user_experience_vector, storypoints):
  
 	return best_solution
 
-def generate_solution_for_user(dataset, issues_done_by_user, storypoints):
+def generate_solution_for_user(project, dataset, issues_done_by_user, storypoints):
  
 	done = h.get_done_issues(dataset)
 
 	backlog = h.get_backlog_issues(dataset)
  
-	number_of_topics, alpha, beta = h.get_hyperparameters('MDL')
+	number_of_topics, alpha, beta = h.get_hyperparameters(project)
  
 	lda_model, dictionary = lda.get_lda_model(done, number_of_topics, alpha, beta)
 	

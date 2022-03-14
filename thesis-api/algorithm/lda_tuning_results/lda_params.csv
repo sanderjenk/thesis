@@ -1,0 +1,16 @@
+project,topics,alpha,beta
+compass,5,symmetric,0.31
+datacass,3,0.9099999999999999,0.31
+fab,10,0.9099999999999999,0.31
+is,2,asymmetric,0.31
+mdl,8,0.61,0.01
+mobile,3,0.61,0.61
+stl,2,0.01,0.01
+apstud,3,asymmetric,0.9099999999999999
+dnn,2,asymmetric,0.31
+mesos,5,asymmetric,0.61
+mule,6,0.9099999999999999,0.31
+nexus,7,0.31,0.61
+timob,10,0.9099999999999999,0.31
+tistud,9,0.9099999999999999,0.9099999999999999
+xd,2,asymmetric,symmetric

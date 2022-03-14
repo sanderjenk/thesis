@@ -3,14 +3,14 @@ import numpy as np
 from scipy import spatial
 
 def get_done_issues(df):
-
-	df = df.loc[(df["assignee.name"].notna()) & (df["resolutiondate"].notna())]
-
+    
+	df = df.loc[df["backlog"] == False]
+ 
 	return df
 
 def get_backlog_issues(df):
 
-	df = df.loc[(df["assignee.name"].isna()) & (df["resolutiondate"].isna())]
+	df = df.loc[df["backlog"] == True]
 
 	return df
 
@@ -26,22 +26,20 @@ def cosine_similarity(vector1, vector2):
 
 def get_hyperparameters(project):
     
-    df = pd.read_csv('./algorithm/lda_tuning_results/' + project + '_lda_tuning_results.csv', encoding='utf-8')
+    df = pd.read_csv('./algorithm/lda_tuning_results/lda_params.csv', encoding='utf-8')
 
-    index = df['Coherence'].idxmax()
+    row = df.loc[df["project"] == project.lower()].iloc[0]
 
-    row = df.iloc[index]
+    topics = row["topics"]
 
-    topics = row["Topics"]
-
-    alpha = row["Alpha"]
+    alpha = row["alpha"]
 
     try:
         alpha = float(alpha)
     except ValueError:
-        print("Alpha is string")
+        print("Alpha is string: " + str(type(alpha)))
 
-    beta = row["Beta"]
+    beta = row["beta"]
 
     try:
         beta = float(beta)

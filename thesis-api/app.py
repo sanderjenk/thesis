@@ -4,6 +4,7 @@ from flask_pymongo import PyMongo
 import json
 from bson import json_util
 from flask_cors import CORS
+import numpy as np
 import sys
 sys.path.insert(0, './algorithm')
 sys.path.insert(0, './algorithm/helpers')
@@ -21,11 +22,9 @@ mongo = PyMongo(app)
 
 db = mongo.db
 
-dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
+# dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
 
-dataset['description'] = dataset['description'].fillna("")
-
-dataset = pp.preprocess(dataset)
+# dataset = pp.preprocess(dataset)
 
 # db.issues.delete_many({})
 
@@ -41,13 +40,15 @@ def projects():
 
 @app.route('/api/issues')
 def issues():
-    print(request.args)
     project = request.args["project"]
     queryString = request.args["queryString"]
     pageSize = int(request.args["pageSize"])
     pageNumber = int(request.args["pageNumber"])
     cursor = db.issues \
-        .find({"project": {"$eq": project}, "text": {"$regex" : queryString}}) \
+        .find({\
+            "project": {"$eq": project}, \
+            "text": {"$regex" : queryString}, \
+            "backlog": {"$eq": False}}) \
         .skip((pageNumber-1) * pageSize) \
         .limit(pageSize)
     return get_json(cursor, True)
@@ -55,30 +56,39 @@ def issues():
 
 @app.route('/api/issuescount')
 def issuesCount():
-    print(request.args)
     project = request.args["project"]
     queryString = request.args["queryString"]
     count = db.issues \
-        .count_documents({"project": {"$eq": project}, "text": {"$regex" : queryString}}) \
-            
+        .count_documents({\
+            "project": {"$eq": project}, \
+            "text": {"$regex" : queryString}, \
+            "backlog": {"$eq": False}})
     return str(count)
 
 @app.route('/api/generate', methods=['POST'])
 def generate():
     issues = []
     
-    cursor = db.issues.find({})
+    project = request.args["project"]
+    
+    cursor = db.issues.find({"project": {"$eq": project}})    
     
     [issues.append(doc) for doc in cursor]
     
     df = pd.DataFrame.from_dict(issues)
 
-    user_issues = df.loc[df['key'].isin(request.json)]
+    cursor = db.issues.find({'key': {'$in': request.json}})
     
-    solution = alg.generate_solution_for_user(df, user_issues, 15)
+    user_issues = []
+    
+    [user_issues.append(doc) for doc in cursor]
+
+    user_issues_df = pd.DataFrame.from_dict(user_issues)
+    
+    solution = alg.generate_solution_for_user(project, df, user_issues_df, 15)
     
     cursor = db.issues.find({'key': {'$in': solution["key"].to_numpy().tolist()}})
-    
+
     return get_json(cursor, True)
 
 @app.route('/api/feedback', methods=['POST'])
