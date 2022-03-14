@@ -39,7 +39,8 @@ export class IssuesService {
   }
 
   generateReccommendations(issues: Issue[]) {
-    this.http.post<string[]>("http://localhost:5000/api/generate", issues.map(x => x.key)).pipe(
+    let project = this.selectedProjectSubject.value.toLowerCase();
+    this.http.post<string[]>("http://localhost:5000/api/generate?project=" + project, issues.map(x => x.key)).pipe(
       map(x => x.map(y => 
         {    
           var issue = JSON.parse(y)

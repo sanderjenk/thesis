@@ -12,7 +12,7 @@ export class IssuesComponent implements OnInit {
   selectedIssuesCount = 0;
   issues: Issue[] = [];
   pageNumber: number = 1;
-  pageSize: number = 20;
+  pageSize: number = 10;
   totalCount: number = 0;
   queryString: string = "";
 

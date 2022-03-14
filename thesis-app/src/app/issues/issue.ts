@@ -4,4 +4,5 @@ export interface Issue {
 	summary: string;
 	priority: string;
 	storypoints: string;
+	project: string;
 }
