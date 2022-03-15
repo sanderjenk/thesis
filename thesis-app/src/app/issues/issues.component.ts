@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Issue } from './issue';
 import { IssuesService } from './issues.service';
@@ -19,13 +20,18 @@ export class IssuesComponent implements OnInit {
   constructor(
     private issuesService: IssuesService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private _snackBar: MatSnackBar
     ) { }
 
   ngOnInit(): void {
     this.getIssues();
     this.getIssuesCount();
     this.getSelectedIssuesCount();
+  }
+
+  openSnackBar() {
+    this._snackBar.open("Issue assigned", "Dismiss");
   }
 
   getIssues() {
@@ -45,6 +51,7 @@ export class IssuesComponent implements OnInit {
 
   selectIssue(issue: Issue) {
     this.issuesService.addIssueToHistory(issue);
+    this.openSnackBar();
   }
 
   navigate() {
