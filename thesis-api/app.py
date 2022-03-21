@@ -38,33 +38,6 @@ def projects():
     
     return get_json(projects)
 
-@app.route('/api/issues')
-def issues():
-    project = request.args["project"]
-    queryString = request.args["queryString"]
-    pageSize = int(request.args["pageSize"])
-    pageNumber = int(request.args["pageNumber"])
-    cursor = db.issues \
-        .find({\
-            "project": {"$eq": project}, \
-            "text": {"$regex" : queryString}, \
-            "backlog": {"$eq": False}}) \
-        .skip((pageNumber-1) * pageSize) \
-        .limit(pageSize)
-    return get_json(cursor, True)
-
-
-@app.route('/api/issuescount')
-def issuesCount():
-    project = request.args["project"]
-    queryString = request.args["queryString"]
-    count = db.issues \
-        .count_documents({\
-            "project": {"$eq": project}, \
-            "text": {"$regex" : queryString}, \
-            "backlog": {"$eq": False}})
-    return str(count)
-
 @app.route('/api/generate', methods=['POST'])
 def generate():
     issues = []

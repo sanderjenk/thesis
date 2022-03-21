@@ -1,28 +1,5 @@
 <mat-card>Hello and welcome to my crib</mat-card>
 
-
-<h1 style="margin: 20px 0">Your "history" issues</h1>
-
-<div class="issues-container" style="margin-bottom: 20px;">
-	<mat-accordion multi>
-		<mat-expansion-panel *ngFor="let issue of selectedIssues">
-			<mat-expansion-panel-header>
-				<mat-panel-title>
-					{{ issue.priority }}
-					<br>
-					SP: {{issue.storypoints}}
-				</mat-panel-title>
-				<mat-panel-description>
-					{{issue.summary}}
-				</mat-panel-description>
-			</mat-expansion-panel-header>
-			<p> {{issue.description}}</p>
-			<button mat-flat-button color="warn" (click)="remove(issue)">Remove</button>
-
-		</mat-expansion-panel>
-	</mat-accordion>
-</div>
-
 <form [formGroup]="generateForm" (ngSubmit)="generate()">
 	<mat-form-field appearance="fill">
 		<mat-label>Developer</mat-label>
@@ -40,7 +17,6 @@
 		(click)="generate()" [disabled]="!generateForm.valid">Generate recommendations
 	</button>
 </form>
-
 
 <mat-spinner *ngIf="showSpinner"></mat-spinner>
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IssuesService } from '../issues/issues.service';
+import { IssuesService } from '../issues.service';
 import { Project } from './project';
 
 @Component({
@@ -24,7 +24,7 @@ export class ProjectsComponent implements OnInit {
 
   selectProject(key: string){
     this.issuesService.selectProject(key);
-    this.router.navigate(["/issues"], {relativeTo: this.route})
+    this.router.navigate(["/generate"], {relativeTo: this.route})
   }
 
 }

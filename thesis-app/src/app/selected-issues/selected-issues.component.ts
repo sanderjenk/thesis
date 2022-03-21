@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { IssuesService } from '../issues/issues.service';
-import { Issue } from '../issues/issue';
+import { IssuesService } from '../issues.service';
+import { Issue } from '../issue';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Xliff } from '@angular/compiler';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -21,12 +20,8 @@ export class SelectedIssuesComponent implements OnInit {
   constructor(private issuesService: IssuesService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-    this.getIssues();
     this.getGeneratedIssues();
-    this.getSelectedIssuesCount();
-
     this.initFeedbackForm();
-
     this.initGenerateForm();
     this.getDevelopers();
   }
@@ -42,12 +37,6 @@ export class SelectedIssuesComponent implements OnInit {
       storypoints: new FormControl(10, [Validators.required]),
       developer: new FormControl(null, Validators.required)
     });
-  }
-
-  getIssues() {
-    this.issuesService.issueHistorySubject.subscribe((issues: Issue[]) => {
-      this.selectedIssues = issues;
-    })
   }
 
   getDevelopers() {
@@ -76,10 +65,6 @@ export class SelectedIssuesComponent implements OnInit {
     });
   }
 
-  getSelectedIssuesCount() {
-    this.issuesService.issueHistorySubject.subscribe(x => this.selectedIssuesCount = x.length);
-  }
-
   submit(){
     let value = this.feedbackForm.value;
     let data = {
@@ -91,7 +76,6 @@ export class SelectedIssuesComponent implements OnInit {
       this.openSnackBar();
     })
   }
-
   
   openSnackBar() {
     this._snackBar.open("Thank you", "Dismiss", {duration: 3000});
