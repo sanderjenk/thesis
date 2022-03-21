@@ -52,7 +52,7 @@ def replace_nans(df):
 def preprocess(df):
 	df = map_priorities(df)
 	df = fill_story_points(df)
-	df = replace_zero_story_points(df)
+	# df = replace_zero_story_points(df)
 	df = remove_outliers(df, "storypoints")
 	df = calculate_business_values(df)
 	df = merge_desc_sum(df)

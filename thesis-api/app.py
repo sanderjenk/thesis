@@ -71,6 +71,8 @@ def generate():
     
     project = request.args["project"]
     
+    storypoints = request.args["storypoints"]
+    
     cursor = db.issues.find({"project": {"$eq": project}})    
     
     [issues.append(doc) for doc in cursor]
@@ -85,7 +87,7 @@ def generate():
 
     user_issues_df = pd.DataFrame.from_dict(user_issues)
     
-    solution = alg.generate_solution_for_user(project, df, user_issues_df, 15)
+    solution = alg.generate_solution_for_user(project, df, user_issues_df, int(storypoints))
     
     cursor = db.issues.find({'key': {'$in': solution["key"].to_numpy().tolist()}})
 

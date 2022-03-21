@@ -1,5 +1,7 @@
 <mat-card>Hello and welcome to my crib</mat-card>
 
+<h1 style="margin: 20px 0">Your "history" issues</h1>
+
 <div class="issues-container" style="margin-bottom: 20px;">
 	<mat-accordion multi>
 		<mat-expansion-panel *ngFor="let issue of selectedIssues">
@@ -20,13 +22,21 @@
 	</mat-accordion>
 </div>
 
-<button style="margin-bottom: 20px;" mat-flat-button color="primary" 
-	*ngIf="selectedIssues.length > 0" (click)="generate()" 
-	[disabled]="selectedIssuesCount < 0">Generate recommendations
-</button>
+<form [formGroup]="generateForm" (ngSubmit)="generate()">
+	<mat-form-field class="example-full-width" appearance="fill" style="margin-right: 20px;">
+		<mat-label>Story points</mat-label>
+		<input matInput type="number" formControlName="storypoints">
+	</mat-form-field>
+	<button style="margin-bottom: 20px;" mat-flat-button color="primary" *ngIf="selectedIssues.length > 0"
+		(click)="generate()" [disabled]="selectedIssuesCount < 5 || !generateForm.valid">Generate recommendations
+	</button>
+</form>
 
-<div class="issues-container">
-	<h2>Feedback</h2>
+
+<mat-spinner *ngIf="showSpinner"></mat-spinner>
+
+<div class="issues-container" *ngIf="generatedIssues.length > 0">
+	<h1 style="margin: 20px 0">Your recommended sprint plan</h1>
 	<mat-accordion multi>
 		<mat-expansion-panel *ngFor="let issue of generatedIssues">
 			<mat-expansion-panel-header>
@@ -43,7 +53,8 @@
 		</mat-expansion-panel>
 	</mat-accordion>
 </div>
-<form [formGroup]="feedbackForm" (ngSubmit)="submit()" *ngIf="generatedIssues.length > -1">
+<form [formGroup]="feedbackForm" (ngSubmit)="submit()" *ngIf="generatedIssues.length > 0">
+	<h1 style="margin: 20px 0">Feedback</h1>
 	<label id="example-radio-group-label">1. How pleased are you with the recommended sprint plan</label>
 	<mat-radio-group class="example-radio-group" style="margin-bottom: 20px;" aria-label="Select an option" formControlName="rating">
 		<mat-radio-button class="example-radio-button" value="1">1</mat-radio-button>

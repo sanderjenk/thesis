@@ -14,6 +14,6 @@ export class IntroComponent implements OnInit {
   }
 
   continue() {
-    this.router.navigate(["/issues"])
+    this.router.navigate(["/projects"])
   }
 }

@@ -31,7 +31,7 @@ export class IssuesComponent implements OnInit {
   }
 
   openSnackBar() {
-    this._snackBar.open("Issue assigned", "Dismiss");
+    this._snackBar.open("Issue assigned", "Dismiss", {duration: 2000});
   }
 
   getIssues() {

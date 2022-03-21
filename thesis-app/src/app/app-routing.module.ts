@@ -14,12 +14,12 @@ const routes: Routes = [
   { 
     path: 'issues', 
     component: IssuesComponent, 
-    // canActivate: [ProjectGuard] 
+    canActivate: [ProjectGuard] 
   },
   { 
     path: 'selected', 
     component: SelectedIssuesComponent, 
-    // canActivate: [ProjectGuard]
+    canActivate: [ProjectGuard]
 },
   { 
     path: 'projects', 
