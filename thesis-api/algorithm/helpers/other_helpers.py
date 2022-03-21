@@ -20,6 +20,30 @@ def get_individuals_by_bit_array(df, bit_array):
 
     return df.iloc[indices]
 
+def intersect_vectors(developer_vector, issue_vector):
+    
+    new_issue_vector = []
+    
+    new_developer_vector = []
+    
+    for i in range(len(issue_vector)):
+        
+        if (issue_vector[i] == 0):
+            
+            continue
+        
+        new_issue_vector.append(issue_vector[i])
+        
+        new_developer_vector.append(developer_vector[i])
+                
+    return new_developer_vector, new_issue_vector
+
+def cosine_similarity_with_intersection(developer_vector, issue_vector):
+    
+    developer_vector, issue_vector = intersect_vectors(developer_vector, issue_vector)
+    
+    return cosine_similarity(developer_vector, issue_vector)
+
 def cosine_similarity(vector1, vector2):
 
     return 1 - spatial.distance.cosine(vector1, vector2)
@@ -48,5 +72,3 @@ def get_hyperparameters(project):
         print("Beta is string")
 
     return topics, alpha, beta
-
-

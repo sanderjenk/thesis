@@ -7,7 +7,7 @@ import helpers.other_helpers as h
 
 def get_best_solution_for_user(backlog, user_experience_vector, storypoints):
 
-	backlog["issue_similarity"] = backlog.apply(lambda x: h.cosine_similarity(user_experience_vector, x["vector"]), axis = 1)
+	backlog["issue_similarity"] = backlog.apply(lambda x: h.cosine_similarity_with_intersection(user_experience_vector, x["vector"]), axis = 1)
  
 	businessvalue_array = backlog["businessvalue_normalized"].to_numpy()
  
