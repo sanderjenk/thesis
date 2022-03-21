@@ -38,9 +38,15 @@ export class IssuesService {
       map(x => x.map(y => JSON.parse(y))));
   }
 
-  generateReccommendations(issues: Issue[], storypoints: number) {
+  getDevelopers() {
     let project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.post<string[]>("http://localhost:5000/api/generate", issues.map(x => x.key), {params: {project, storypoints}}).pipe(
+    return this.http.get<string[]>("http://localhost:5000/api/developers" , {params: {project}}).pipe(
+      map(x => x.map(y => JSON.parse(y))));
+    }
+
+  generateReccommendations(storypoints: number, developer: string) {
+    let project = this.selectedProjectSubject.value.toLowerCase();
+    return this.http.post<string[]>("http://localhost:5000/api/generate2", {}, {params: {project, storypoints, username: developer}}).pipe(
       map(x => x.map(y => 
         {    
           var issue = JSON.parse(y)

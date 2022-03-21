@@ -1,5 +1,6 @@
 <mat-card>Hello and welcome to my crib</mat-card>
 
+
 <h1 style="margin: 20px 0">Your "history" issues</h1>
 
 <div class="issues-container" style="margin-bottom: 20px;">
@@ -23,12 +24,20 @@
 </div>
 
 <form [formGroup]="generateForm" (ngSubmit)="generate()">
+	<mat-form-field appearance="fill">
+		<mat-label>Developer</mat-label>
+		<mat-select formControlName="developer">
+		  <mat-option *ngFor="let dev of developers" [value]="dev">
+			{{dev}}
+		  </mat-option>
+		</mat-select>
+	  </mat-form-field>
 	<mat-form-field class="example-full-width" appearance="fill" style="margin-right: 20px;">
 		<mat-label>Story points</mat-label>
 		<input matInput type="number" formControlName="storypoints">
 	</mat-form-field>
-	<button style="margin-bottom: 20px;" mat-flat-button color="primary" *ngIf="selectedIssues.length > 0"
-		(click)="generate()" [disabled]="selectedIssuesCount < 5 || !generateForm.valid">Generate recommendations
+	<button style="margin-bottom: 20px;" mat-flat-button color="primary"
+		(click)="generate()" [disabled]="!generateForm.valid">Generate recommendations
 	</button>
 </form>
 

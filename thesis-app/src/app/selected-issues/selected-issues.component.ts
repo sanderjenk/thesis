@@ -17,7 +17,7 @@ export class SelectedIssuesComponent implements OnInit {
   showSpinner = false;
   feedbackForm: any;
   generateForm: any;
-
+  developers: string[] = []
   constructor(private issuesService: IssuesService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
@@ -28,6 +28,7 @@ export class SelectedIssuesComponent implements OnInit {
     this.initFeedbackForm();
 
     this.initGenerateForm();
+    this.getDevelopers();
   }
 
   initFeedbackForm() {
@@ -35,17 +36,23 @@ export class SelectedIssuesComponent implements OnInit {
       rating: new FormControl(null, [Validators.required])
     });
   }
-
   
   initGenerateForm() {
     this.generateForm = new FormGroup({
-      storypoints: new FormControl(10, [Validators.required])
+      storypoints: new FormControl(10, [Validators.required]),
+      developer: new FormControl(null, Validators.required)
     });
   }
 
   getIssues() {
     this.issuesService.issueHistorySubject.subscribe((issues: Issue[]) => {
       this.selectedIssues = issues;
+    })
+  }
+
+  getDevelopers() {
+    this.issuesService.getDevelopers().subscribe((developers: string[]) => {
+      this.developers = developers;
     })
   }
   
@@ -63,7 +70,7 @@ export class SelectedIssuesComponent implements OnInit {
   generate() {
     this.showSpinner = true;
     this.issuesService.generatedIssuesSubject.next([]);
-    this.issuesService.generateReccommendations(this.selectedIssues, this.generateForm.value.storypoints).subscribe((issues: Issue[]) => {
+    this.issuesService.generateReccommendations(this.generateForm.value.storypoints, this.generateForm.value.developer).subscribe((issues: Issue[]) => {
       this.issuesService.generatedIssuesSubject.next(issues);
       this.showSpinner = false;
     });

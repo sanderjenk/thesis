@@ -20,6 +20,7 @@ class Issues(Problem):
         self.S = S
         self.B = B
         self.I = I
+        self.N = N
         self.C = C
 
     def _evaluate(self, x, out, *args, **kwargs):

@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 def add_backlog_flag(df):
-	df["backlog"]= df.apply(lambda x: ((x["assignee.name"]) == None) & (x["resolutiondate"] == None), axis = 1)
+	df["backlog"]= df.apply(lambda x: ((x["assignee"]) == None) & (x["resolutiondate"] == None), axis = 1)
 	return df
 
 def merge_desc_sum(df):
@@ -13,7 +13,7 @@ def merge_desc_sum(df):
 	return df
 
 def cols(df):
-	df = df[["created", "assignee.name", "priority", "status.name",	"text", "storypoints", "project", "resolutiondate", "description", "summary", "key", "businessvalue", "businessvalue_normalized"]]
+	df = df[["created", "assignee", "priority", "status.name",	"text", "storypoints", "project", "resolutiondate", "description", "summary", "key", "businessvalue", "businessvalue_normalized"]]
 	return df
 
 def fill_story_points(df):
@@ -49,7 +49,12 @@ def replace_nans(df):
 	df = df.where(pd.notnull(df), None)
 	return df
 
+def rename_assignee(df):
+	df = df.rename(columns={"assignee.name": "assignee"})
+	return df
+
 def preprocess(df):
+	df = rename_assignee(df)
 	df = map_priorities(df)
 	df = fill_story_points(df)
 	# df = replace_zero_story_points(df)

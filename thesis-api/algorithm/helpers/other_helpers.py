@@ -50,7 +50,7 @@ def cosine_similarity(vector1, vector2):
 
 def calculate_novelty(developer_vector, issue_vector):
     
-    highest_topic_index = issue_vector.index(max(issue_vector))
+    highest_topic_index = np.argmax(issue_vector)
     
     if (developer_vector[highest_topic_index] == 0):
         

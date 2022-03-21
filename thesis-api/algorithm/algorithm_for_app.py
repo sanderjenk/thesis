@@ -42,21 +42,3 @@ def generate_solution_for_user(project, dataset, issues_done_by_user, storypoint
 	vector = lda.get_user_experience_topic_vector(issues_done_by_user, lda_model, dictionary, number_of_topics)
  
 	return get_best_solution_for_user(backlog, vector, storypoints)
-
-
-if __name__ == '__main__':
-	storypoints = 15
-    
-	dataset = pd.read_csv('../dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
-
-	dataset = dataset.loc[dataset["project"] == "MDL"]
-
-	issues_done_by_user = dataset.iloc[:10]
- 
-	dataset = pp.preprocess(dataset)
- 
-	issues_done_by_user = pp.preprocess(issues_done_by_user)
-
-	solution = generate_solution_for_user(dataset, issues_done_by_user, storypoints)
-
-	print(solution["storypoints"].sum())

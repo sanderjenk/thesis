@@ -73,13 +73,15 @@ def generate():
     
     storypoints = request.args["storypoints"]
     
+    username = request.args["username"]
+    
     cursor = db.issues.find({"project": {"$eq": project}})    
     
     [issues.append(doc) for doc in cursor]
     
     df = pd.DataFrame.from_dict(issues)
 
-    cursor = db.issues.find({'key': {'$in': request.json}})
+    cursor = db.issues.find({"project": {"$eq": project},'assignee': {'$eq': username}})
     
     user_issues = []
     
@@ -92,6 +94,14 @@ def generate():
     cursor = db.issues.find({'key': {'$in': solution["key"].to_numpy().tolist()}})
 
     return get_json(cursor, True)
+
+@app.route('/api/developers', methods=['GET'])
+def developers():
+    project = request.args["project"]
+
+    cursor = db.issues.distinct("assignee", {"project": project})
+    
+    return get_json(cursor, False)
 
 @app.route('/api/feedback', methods=['POST'])
 def feedback():
@@ -109,7 +119,7 @@ def get_json(cursor, issues = False):
         
         if (issues):
             ## these assholes can be NaN
-            doc.pop('assignee.name', None)
+            doc.pop('assignee', None)
             doc.pop('resolutiondate', None)
             doc.pop('resolution.description', None)
             doc.pop('resolution.name', None)
