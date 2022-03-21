@@ -48,6 +48,16 @@ def cosine_similarity(vector1, vector2):
 
     return 1 - spatial.distance.cosine(vector1, vector2)
 
+def calculate_novelty(developer_vector, issue_vector):
+    
+    highest_topic_index = issue_vector.index(max(issue_vector))
+    
+    if (developer_vector[highest_topic_index] == 0):
+        
+        return 1
+    
+    return 0
+
 def get_hyperparameters(project):
     
     df = pd.read_csv('./algorithm/lda_tuning_results/lda_params.csv', encoding='utf-8')

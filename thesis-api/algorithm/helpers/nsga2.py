@@ -12,6 +12,7 @@ class Issues(Problem):
                  S,  # story points of each issue
                  B,  # business value of each issue
                  I,  # Issue similarity to user experience
+                 N,  # Issue novelty
                  C,  # maximum story points
                  ):
         super().__init__(n_var=n_items, n_obj=1, n_constr=1, xl=0, xu=100, type_var=bool)
@@ -24,14 +25,15 @@ class Issues(Problem):
     def _evaluate(self, x, out, *args, **kwargs):
         f1 = - anp.sum(self.B * x, axis=1)
         f2 = - anp.sum(self.I * x, axis=1)
+        f3 = - anp.sum(self.N * x, axis=1)
 
-        out["F"] = anp.column_stack([f1, f2])
+        out["F"] = anp.column_stack([f1, f2, f3])
         out["G"] = (anp.sum(self.S * x, axis=1) - self.C)
 
 
-def get_optimization_result(storypoints, businessvalue, issue_similarity, max_story_points):
+def get_optimization_result(storypoints, businessvalue, issue_similarity, novelty, max_story_points):
     
-    problem = Issues(len(storypoints), storypoints, businessvalue, issue_similarity, max_story_points)
+    problem = Issues(len(storypoints), storypoints, businessvalue, issue_similarity, novelty, max_story_points)
 
     algorithm = NSGA2(
         pop_size=200,

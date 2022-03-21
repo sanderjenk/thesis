@@ -9,13 +9,17 @@ def get_best_solution_for_user(backlog, user_experience_vector, storypoints):
 
 	backlog["issue_similarity"] = backlog.apply(lambda x: h.cosine_similarity_with_intersection(user_experience_vector, x["vector"]), axis = 1)
  
+	backlog["novelty"] = backlog.apply(lambda x: h.calculate_novelty(user_experience_vector, x["vector"]), axis = 1)
+ 
 	businessvalue_array = backlog["businessvalue_normalized"].to_numpy()
  
 	storypoints_array = backlog["storypoints"].to_numpy()
  
 	issue_similarity_array = backlog["issue_similarity"].to_numpy()
+ 
+	novelty_array = backlog["novelty"].to_numpy()
 
-	res = nsga2.get_optimization_result(storypoints_array, businessvalue_array, issue_similarity_array, storypoints)
+	res = nsga2.get_optimization_result(storypoints_array, businessvalue_array, issue_similarity_array, novelty_array, storypoints)
 
 	best_solution_indices = res.X.astype(np.int)
 
