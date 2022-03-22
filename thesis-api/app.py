@@ -22,13 +22,9 @@ mongo = PyMongo(app)
 
 db = mongo.db
 
-# dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
+dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
 
-# dataset = pp.preprocess(dataset)
-
-# db.issues.delete_many({})
-
-# db.issues.insert_many(dataset.to_dict(orient="records"))
+dataset = pp.preprocess(dataset)
 
 @app.route('/api/projects')
 def projects():
@@ -75,6 +71,16 @@ def developers():
     cursor = db.issues.distinct("assignee", {"project": project})
     
     return get_json(cursor, False)
+
+@app.route('/api/velocity', methods=['GET'])
+def velocity():
+    project = request.args["project"]
+
+    username = request.args["username"]
+    
+    velocity = alg.get_velocity_for_user(project, username, dataset)
+    
+    return str(velocity)
 
 @app.route('/api/feedback', methods=['POST'])
 def feedback():

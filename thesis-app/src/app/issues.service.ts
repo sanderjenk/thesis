@@ -9,8 +9,6 @@ import { Issue } from './issue';
 })
 export class IssuesService {
 
-  public issueHistorySubject = new BehaviorSubject<Issue[]>([]);
-
   public selectedProjectSubject = new BehaviorSubject<string>("");
 
   public generatedIssuesSubject = new BehaviorSubject<Issue[]>([]);
@@ -46,7 +44,7 @@ export class IssuesService {
 
   generateReccommendations(storypoints: number, developer: string) {
     let project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.post<string[]>("http://localhost:5000/api/generate2", {}, {params: {project, storypoints, username: developer}}).pipe(
+    return this.http.post<string[]>("http://localhost:5000/api/generate", {}, {params: {project, storypoints, username: developer}}).pipe(
       map(x => x.map(y => 
         {    
           var issue = JSON.parse(y)
@@ -55,33 +53,13 @@ export class IssuesService {
         })));
   }
 
-  addIssueToHistory(issue: Issue) {
-    let history = this.issueHistorySubject.getValue();
-
-    if (history.find(x => x.key == issue.key)) return;
-
-    history.push(issue);
-
-    this.issueHistorySubject.next(history);
-  }
-
-  remove(key: string) {
-    let history = this.issueHistorySubject.getValue();
-
-    let issue = history.find(x => x.key == key);
-
-    if (!issue) return;
-
-    let index = history.indexOf(issue);
-
-    history.splice(index, 1);
-
-    this.issueHistorySubject.next(history);
-  }
+  getVelocity(developer: string) {
+    let project = this.selectedProjectSubject.value.toLowerCase();
+    return this.http.get<number>("http://localhost:5000/api/velocity", {params: {username: developer, project}})
+  } 
 
   selectProject(key: string) {
     this.selectedProjectSubject.next(key);
-    this.issueHistorySubject.next([])
     this.generatedIssuesSubject.next([])
   }
 

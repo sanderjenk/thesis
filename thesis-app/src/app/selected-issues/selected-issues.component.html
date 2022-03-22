@@ -3,7 +3,7 @@
 <form [formGroup]="generateForm" (ngSubmit)="generate()">
 	<mat-form-field appearance="fill">
 		<mat-label>Developer</mat-label>
-		<mat-select formControlName="developer">
+		<mat-select formControlName="developer" (selectionChange)="getVelocity()">
 		  <mat-option *ngFor="let dev of developers" [value]="dev">
 			{{dev}}
 		  </mat-option>
@@ -16,6 +16,8 @@
 	<button style="margin-bottom: 20px;" mat-flat-button color="primary"
 		(click)="generate()" [disabled]="!generateForm.valid">Generate recommendations
 	</button>
+
+	<p>Your recommended storypoints for the next two week sprint is {{ velocity }}</p>
 </form>
 
 <mat-spinner *ngIf="showSpinner"></mat-spinner>

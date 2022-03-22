@@ -10,13 +10,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./selected-issues.component.css'],
 })
 export class SelectedIssuesComponent implements OnInit {
-  selectedIssues: Issue[] = [];
-  selectedIssuesCount = 0;
   generatedIssues: Issue[] = [];
   showSpinner = false;
   feedbackForm: any;
   generateForm: any;
   developers: string[] = []
+  velocity: number = 0;
   constructor(private issuesService: IssuesService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
@@ -51,11 +50,6 @@ export class SelectedIssuesComponent implements OnInit {
     })
   }
 
-  remove(issue: Issue) {
-    this.issuesService.remove(issue.key); 
-    this.issuesService.generatedIssuesSubject.next([]);
-  }
-
   generate() {
     this.showSpinner = true;
     this.issuesService.generatedIssuesSubject.next([]);
@@ -65,11 +59,17 @@ export class SelectedIssuesComponent implements OnInit {
     });
   }
 
+  getVelocity() {
+    this.issuesService.getVelocity(this.generateForm.value.developer).subscribe(velocity => {
+      this.velocity = velocity;
+      this.generateForm.controls.storypoints.setValue(velocity);
+    })
+  }
+
   submit(){
     let value = this.feedbackForm.value;
     let data = {
       feedbackForm: value,
-      selectedIssues: this.selectedIssues.map(x => x.key),
       generatedIssues: this.generatedIssues.map(x => x.key)
     }
     this.issuesService.submitFeedbackForm(data).subscribe(() => {

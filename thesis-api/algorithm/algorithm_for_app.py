@@ -4,7 +4,8 @@ import helpers.lda as lda
 import helpers.nsga2 as nsga2
 import numpy as np
 import helpers.other_helpers as h
-
+import datetime
+import math
 def get_best_solution_for_user(backlog, user_experience_vector, storypoints):
 
 	backlog["issue_similarity"] = backlog.apply(lambda x: h.cosine_similarity_with_intersection(user_experience_vector, x["vector"]), axis = 1)
@@ -42,3 +43,30 @@ def generate_solution_for_user(project, dataset, issues_done_by_user, storypoint
 	vector = lda.get_user_experience_topic_vector(issues_done_by_user, lda_model, dictionary, number_of_topics)
  
 	return get_best_solution_for_user(backlog, vector, storypoints)
+
+def get_velocity_for_user(project, username, dataset):
+ 
+	done = h.get_done_issues(dataset)
+ 
+	print(done[["project", "assignee", "resolutiondate"]].head())
+
+	user_issues = done.loc[(done["project"] == project) & (done["assignee"] == username) & (done["resolutiondate"].notnull())]
+	print(user_issues[["project", "assignee", "resolutiondate"]].head())
+ 
+ 
+	user_issues["parsed_resolutiondate"] = user_issues.apply(lambda x: datetime.datetime.strptime(x["resolutiondate"], '%Y-%m-%dT%H:%M:%S.%f%z'), axis = 1)
+
+	print(user_issues["parsed_resolutiondate"].head())
+
+	grouped = user_issues.groupby(pd.Grouper(key="parsed_resolutiondate", freq= "2W", origin="start"))
+ 
+	storypoints = []
+ 
+	for key, df in grouped:
+		if (len(df.index) == 0):
+			continue
+		storypoints.append(df["storypoints"].mean())
+  
+	print(np.mean(storypoints))
+   
+	return int(math.ceil(np.mean(storypoints)))
