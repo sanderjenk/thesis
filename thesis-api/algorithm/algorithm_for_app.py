@@ -48,25 +48,17 @@ def get_velocity_for_user(project, username, dataset):
  
 	done = h.get_done_issues(dataset)
  
-	print(done[["project", "assignee", "resolutiondate"]].head())
-
-	user_issues = done.loc[(done["project"] == project) & (done["assignee"] == username) & (done["resolutiondate"].notnull())]
-	print(user_issues[["project", "assignee", "resolutiondate"]].head())
- 
+	user_issues = done.loc[(done["project"] == project) & (done["assignee.name"] == username) & (done["resolutiondate"].notnull())]
  
 	user_issues["parsed_resolutiondate"] = user_issues.apply(lambda x: datetime.datetime.strptime(x["resolutiondate"], '%Y-%m-%dT%H:%M:%S.%f%z'), axis = 1)
-
-	print(user_issues["parsed_resolutiondate"].head())
 
 	grouped = user_issues.groupby(pd.Grouper(key="parsed_resolutiondate", freq= "2W", origin="start"))
  
 	storypoints = []
  
-	for key, df in grouped:
+	for _, df in grouped:
 		if (len(df.index) == 0):
 			continue
 		storypoints.append(df["storypoints"].mean())
   
-	print(np.mean(storypoints))
-   
 	return int(math.ceil(np.mean(storypoints)))

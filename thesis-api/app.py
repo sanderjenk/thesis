@@ -36,7 +36,6 @@ def projects():
 
 @app.route('/api/generate', methods=['POST'])
 def generate():
-    issues = []
     
     project = request.args["project"]
     
@@ -44,31 +43,19 @@ def generate():
     
     username = request.args["username"]
     
-    cursor = db.issues.find({"project": {"$eq": project}})    
-    
-    [issues.append(doc) for doc in cursor]
-    
-    df = pd.DataFrame.from_dict(issues)
+    project_issues = dataset.loc[dataset["project"] == project]
 
-    cursor = db.issues.find({"project": {"$eq": project},'assignee': {'$eq': username}})
+    user_issues = project_issues.loc[project_issues["assignee"] == username]
     
-    user_issues = []
+    solution = alg.generate_solution_for_user(project, project_issues, user_issues, int(storypoints))
     
-    [user_issues.append(doc) for doc in cursor]
-
-    user_issues_df = pd.DataFrame.from_dict(user_issues)
-    
-    solution = alg.generate_solution_for_user(project, df, user_issues_df, int(storypoints))
-    
-    cursor = db.issues.find({'key': {'$in': solution["key"].to_numpy().tolist()}})
-
-    return get_json(cursor, True)
+    return solution.to_json(orient="records")
 
 @app.route('/api/developers', methods=['GET'])
 def developers():
     project = request.args["project"]
 
-    cursor = db.issues.distinct("assignee", {"project": project})
+    cursor = db.issues.distinct("assignee.name", {"project": project})
     
     return get_json(cursor, False)
 

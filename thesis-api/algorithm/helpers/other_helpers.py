@@ -4,7 +4,7 @@ from scipy import spatial
 
 def get_done_issues(df):
     
-	df = df.loc[df["backlog"] == False]
+	df = df.loc[df["done"] == True]
  
 	return df
 

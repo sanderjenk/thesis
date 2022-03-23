@@ -26,9 +26,11 @@ def preprocess_words(text):
 
     return result
 
-def get_preprocessed_docs(df):
-	
-	return df['text'].map(str).map(preprocess_words)
+def add_preprocessed_text(df):
+    
+	df["preprocessed_text"] = df['text'].map(str).map(preprocess_words)
+ 
+	return df
 
 def get_topic_vector(text, lda, dictionary):
 
@@ -57,8 +59,9 @@ def add_topic_vector_to_baclog_issues(backlog, lda_model, dictionary, number_of_
 
 def get_lda_model(done_issues_df, number_of_topics, alpha, beta):
 
-    preprocessed_docs = get_preprocessed_docs(done_issues_df)
-
+    print(list(done_issues_df.columns))
+    preprocessed_docs = done_issues_df["preprocessed_text"]
+    
     dictionary = get_dictionary(preprocessed_docs) 
 
     dictionary.filter_extremes(no_below=15, no_above=0.7, keep_n=100000)
@@ -79,7 +82,7 @@ def get_bow_corpus(dictionary, preprocessed_docs):
 
 def add_experience_topic_vector_to_users(done_issues_df, lda_model, dictionary, number_of_topics):
 
-	grouping = done_issues_df.groupby("assignee")
+	grouping = done_issues_df.groupby("assignee.name")
 
 	user_df = grouping.agg({'text': 'sum'}).reset_index()
 
@@ -131,5 +134,7 @@ def get_parameter_lists():
     # Beta parameter
     beta = list(np.arange(0.01, 1, 0.3))
     beta.append('symmetric')
+    
+    print(len(beta), len(alpha), len(topics_range))
     
     return topics_range, alpha, beta

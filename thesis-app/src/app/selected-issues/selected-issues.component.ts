@@ -33,7 +33,7 @@ export class SelectedIssuesComponent implements OnInit {
   
   initGenerateForm() {
     this.generateForm = new FormGroup({
-      storypoints: new FormControl(10, [Validators.required]),
+      storypoints: new FormControl(null, [Validators.required]),
       developer: new FormControl(null, Validators.required)
     });
   }
@@ -53,7 +53,7 @@ export class SelectedIssuesComponent implements OnInit {
   generate() {
     this.showSpinner = true;
     this.issuesService.generatedIssuesSubject.next([]);
-    this.issuesService.generateReccommendations(this.generateForm.value.storypoints, this.generateForm.value.developer).subscribe((issues: Issue[]) => {
+    this.issuesService.generateReccommendations(this.generateForm.value.storypoints, this.generateForm.value.developer).subscribe((issues: any) => {
       this.issuesService.generatedIssuesSubject.next(issues);
       this.showSpinner = false;
     });

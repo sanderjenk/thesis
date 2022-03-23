@@ -44,13 +44,7 @@ export class IssuesService {
 
   generateReccommendations(storypoints: number, developer: string) {
     let project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.post<string[]>("http://localhost:5000/api/generate", {}, {params: {project, storypoints, username: developer}}).pipe(
-      map(x => x.map(y => 
-        {    
-          var issue = JSON.parse(y)
-          issue.priority = issue["priority.name"]
-          return issue;
-        })));
+    return this.http.post<string[]>("http://localhost:5000/api/generate", {}, {params: {project, storypoints, username: developer}});
   }
 
   getVelocity(developer: string) {
