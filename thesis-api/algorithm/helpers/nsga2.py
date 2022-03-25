@@ -30,12 +30,13 @@ class Issues(Problem):
 
         out["F"] = anp.column_stack([f1, f2, f3])
         out["G"] = (anp.sum(self.S * x, axis=1) - self.C)
-
-
-def get_optimization_result(storypoints, businessvalue, issue_similarity, novelty, max_story_points):
+        
+def get_problem(storypoints, businessvalue, issue_similarity, novelty, max_story_points):
     
-    problem = Issues(len(storypoints), storypoints, businessvalue, issue_similarity, novelty, max_story_points)
+    return Issues(len(storypoints), storypoints, businessvalue, issue_similarity, novelty, max_story_points)
 
+def get_optimization_result(problem):
+    
     algorithm = NSGA2(
         pop_size=200,
         sampling=get_sampling("bin_random"),
@@ -47,10 +48,5 @@ def get_optimization_result(storypoints, businessvalue, issue_similarity, novelt
         algorithm,
         ('n_gen', 100),
         verbose=False)
-
-    # plot = Scatter()
-    # plot.add(problem.pareto_front(), plot_type="line", color="black", alpha=0.7)
-    # plot.add(res.F, facecolor="none", edgecolor="red")
-    # plot.show()
-
+    
     return res

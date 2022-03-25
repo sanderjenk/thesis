@@ -38,8 +38,7 @@ export class IssuesService {
 
   getDevelopers() {
     let project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.get<string[]>("http://localhost:5000/api/developers" , {params: {project}}).pipe(
-      map(x => x.map(y => JSON.parse(y))));
+    return this.http.get<string[]>("http://localhost:5000/api/developers" , {params: {project}});
     }
 
   generateReccommendations(storypoints: number, developer: string) {

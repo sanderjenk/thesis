@@ -59,7 +59,6 @@ def add_topic_vector_to_baclog_issues(backlog, lda_model, dictionary, number_of_
 
 def get_lda_model(done_issues_df, number_of_topics, alpha, beta):
 
-    print(list(done_issues_df.columns))
     preprocessed_docs = done_issues_df["preprocessed_text"]
     
     dictionary = get_dictionary(preprocessed_docs) 

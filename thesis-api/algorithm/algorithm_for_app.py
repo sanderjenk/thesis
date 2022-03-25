@@ -6,7 +6,10 @@ import numpy as np
 import helpers.other_helpers as h
 import datetime
 import math
-def get_best_solution_for_user(backlog, user_experience_vector, storypoints):
+from pymoo.visualization.scatter import Scatter
+import matplotlib as plt
+
+def optimize(backlog, user_experience_vector, storypoints):
 
 	backlog["issue_similarity"] = backlog.apply(lambda x: h.cosine_similarity_with_intersection(user_experience_vector, x["vector"]), axis = 1)
  
@@ -19,9 +22,11 @@ def get_best_solution_for_user(backlog, user_experience_vector, storypoints):
 	issue_similarity_array = backlog["issue_similarity"].to_numpy()
  
 	novelty_array = backlog["novelty"].to_numpy()
+ 
+	problem = nsga2.get_problem(storypoints_array, businessvalue_array, issue_similarity_array, novelty_array, storypoints)
 
-	res = nsga2.get_optimization_result(storypoints_array, businessvalue_array, issue_similarity_array, novelty_array, storypoints)
-
+	res = nsga2.get_optimization_result(problem)
+ 
 	best_solution_indices = res.X.astype(np.int)
 
 	best_solution = h.get_individuals_by_bit_array(backlog, best_solution_indices[0])
@@ -42,7 +47,7 @@ def generate_solution_for_user(project, dataset, issues_done_by_user, storypoint
  
 	vector = lda.get_user_experience_topic_vector(issues_done_by_user, lda_model, dictionary, number_of_topics)
  
-	return get_best_solution_for_user(backlog, vector, storypoints)
+	return optimize(backlog, vector, storypoints)
 
 def get_velocity_for_user(project, username, dataset):
  

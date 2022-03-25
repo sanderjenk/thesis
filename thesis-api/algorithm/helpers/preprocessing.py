@@ -75,20 +75,27 @@ def remove_outliers(df, col):
 	return df
 
 def preprocess(df):
-    
+	print("add_backlog_flag")
 	df = add_backlog_flag(df)
+	print("map_priorities")
 
 	df = map_priorities(df)
+	print("fix_storypoints")
 
 	df = fix_storypoints(df)
+	print("remove_outliers")
 
 	df = remove_outliers(df, "storypoints")
+	print("calculate_business_values")
 
 	df = calculate_business_values(df)
+	print("merge_desc_sum")
 
 	df = merge_desc_sum(df)
+	print("add_preprocessed_text")
 
 	df = lda.add_preprocessed_text(df)
+	print("normalize_column")
 
 	df = normalize_column(df, "businessvalue")
 

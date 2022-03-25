@@ -71,7 +71,7 @@ def get_hyperparameters(project):
     try:
         alpha = float(alpha)
     except ValueError:
-        print("Alpha is string: " + str(type(alpha)))
+        pass
 
     beta = row["beta"]
 
@@ -79,6 +79,5 @@ def get_hyperparameters(project):
         beta = float(beta)
         
     except ValueError:
-        print("Beta is string")
-
+        pass
     return topics, alpha, beta

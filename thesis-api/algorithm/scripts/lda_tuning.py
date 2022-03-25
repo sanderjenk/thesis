@@ -17,10 +17,7 @@ if __name__ == '__main__':
 	grouped = dataset.groupby("project")
 
 	for project, df in grouped:
-		if (project != "MOBILE"):
-			continue
 
-		print("here")
 		df = df.sample(200)
 		
 		preprocessed_docs = lda.get_preprocessed_docs(df)

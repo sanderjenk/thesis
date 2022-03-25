@@ -6,6 +6,8 @@ from bson import json_util
 from flask_cors import CORS
 import numpy as np
 import sys
+from ast import literal_eval
+
 sys.path.insert(0, './algorithm')
 sys.path.insert(0, './algorithm/helpers')
 
@@ -22,9 +24,14 @@ mongo = PyMongo(app)
 
 db = mongo.db
 
-dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
+# dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
 
-dataset = pp.preprocess(dataset)
+# dataset = pp.preprocess(dataset)
+
+dataset = pd.read_csv('./dataset/preprocessed_dataset.csv', encoding='utf-8')
+
+dataset["preprocessed_text"] = dataset["preprocessed_text"].apply(literal_eval)
+
 
 @app.route('/api/projects')
 def projects():
@@ -45,7 +52,7 @@ def generate():
     
     project_issues = dataset.loc[dataset["project"] == project]
 
-    user_issues = project_issues.loc[project_issues["assignee"] == username]
+    user_issues = project_issues.loc[(project_issues["assignee.name"] == username)]
     
     solution = alg.generate_solution_for_user(project, project_issues, user_issues, int(storypoints))
     
@@ -54,10 +61,12 @@ def generate():
 @app.route('/api/developers', methods=['GET'])
 def developers():
     project = request.args["project"]
-
-    cursor = db.issues.distinct("assignee.name", {"project": project})
     
-    return get_json(cursor, False)
+    project_issues = dataset.loc[(dataset["project"] == project) & (dataset["assignee.name"].notna())]
+
+    developers = project_issues["assignee.name"].unique()
+    
+    return Response(json.dumps(developers.tolist()),  mimetype='application/json')
 
 @app.route('/api/velocity', methods=['GET'])
 def velocity():
@@ -71,8 +80,7 @@ def velocity():
 
 @app.route('/api/feedback', methods=['POST'])
 def feedback():
-    print(request.json)
-    
+
     db.feedback.insert_one(request.json)
 
     return Response(status=201)
