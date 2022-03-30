@@ -46,7 +46,7 @@ def get_optimization_result(problem):
 
     res = minimize(problem,
         algorithm,
-        ('n_gen', 100),
+        ('n_gen', 200),
         verbose=False)
     
     return res

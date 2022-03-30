@@ -50,12 +50,15 @@ def topic_to_vector(topic, number_of_topics):
     return vector
 
 def add_topic_vector_to_baclog_issues(backlog, lda_model, dictionary, number_of_topics):
+    
+    if backlog.empty:
+        raise Exception("Empty backlog") 
+        
+    initial_vector = backlog.apply(lambda x: get_topic_vector(x["text"], lda_model, dictionary), axis=1)
 
-	intial_vector = backlog.apply(lambda x: get_topic_vector(x["text"], lda_model, dictionary), axis=1)
+    backlog["vector"] = initial_vector.apply(topic_to_vector, args=(number_of_topics,))
 
-	backlog["vector"] = intial_vector.apply(topic_to_vector, args=(number_of_topics,))
-
-	return backlog
+    return backlog
 
 def get_lda_model(done_issues_df, number_of_topics, alpha, beta):
 
@@ -81,17 +84,17 @@ def get_bow_corpus(dictionary, preprocessed_docs):
 
 def add_experience_topic_vector_to_users(done_issues_df, lda_model, dictionary, number_of_topics):
 
-	grouping = done_issues_df.groupby("assignee.name")
+    grouping = done_issues_df.groupby("assignee.name")
 
-	user_df = grouping.agg({'text': 'sum'}).reset_index()
+    user_df = grouping.agg({'text': 'sum'}).reset_index()
 
-	user_df["issue_count"] = grouping["text"].count()
+    user_df["issue_count"] = grouping["text"].count()
 
-	initial_vector = user_df["text"].apply(get_topic_vector, args=(lda_model,dictionary,))
+    initial_vector = user_df["text"].apply(get_topic_vector, args=(lda_model,dictionary,))
 
-	user_df["vector"] = initial_vector.apply(topic_to_vector, args=(number_of_topics,))
+    user_df["vector"] = initial_vector.apply(topic_to_vector, args=(number_of_topics,))
 
-	return user_df
+    return user_df
 
 def get_user_experience_topic_vector(user_done_issues_df, lda_model, dictionary, number_of_topics):
     

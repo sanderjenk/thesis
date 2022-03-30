@@ -6,15 +6,19 @@ import pandas as pd
 def add_backlog_flag(df):
 	done_resolutions = ["Done", "Fixed", "Complete", "Resolved", "Implemented"]
 
-	backlog_statuses = ["Open", "To Do", "New"]
+	backlog_statuses = ["Open", "To Do", "New", "Backlog"]
 
-	df["backlog"]= df.apply(lambda x: ((pd.isna(x["assignee.name"])) & (x["status.name"] in backlog_statuses)), axis = 1)
+	df["backlog"]= df.apply(lambda x: (x["status.name"] in backlog_statuses), axis = 1)
  
 	df["done"] = df.apply(lambda x: ((pd.notna(x["assignee.name"])) & (x["resolution.name"]in done_resolutions)), axis = 1)
  
 	df = df.drop(df[(df["backlog"] == False) & (df["done"]== False)].index)
 
 	return df
+
+def project_tolower(df):
+    df['project'].str.lower()
+    return df
 
 def merge_desc_sum(df):
     
@@ -75,6 +79,7 @@ def remove_outliers(df, col):
 	return df
 
 def preprocess(df):
+	df = project_tolower(df)
 	print("add_backlog_flag")
 	df = add_backlog_flag(df)
 	print("map_priorities")
