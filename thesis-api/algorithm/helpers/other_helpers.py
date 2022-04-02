@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from scipy import spatial
+import datetime
+import math
 
 def get_done_issues(df):
     
@@ -60,7 +62,7 @@ def calculate_novelty(developer_vector, issue_vector):
 
 def get_hyperparameters(project):
     
-    df = pd.read_csv('./algorithm/lda_tuning_results/lda_params.csv', encoding='utf-8')
+    df = pd.read_csv('./thesis-api/algorithm/lda_tuning_results/lda_params.csv', encoding='utf-8')
 
     row = df.loc[df["project"] == project.lower()].iloc[0]
 
@@ -81,3 +83,29 @@ def get_hyperparameters(project):
     except ValueError:
         pass
     return topics, alpha, beta
+
+def get_velocity(user_issues):
+    
+    user_issues["parsed_resolutiondate"] = user_issues.apply(lambda x: datetime.datetime.strptime(x["resolutiondate"], '%Y-%m-%dT%H:%M:%S.%f%z'), axis = 1)
+
+    grouped = user_issues.groupby(pd.Grouper(key="parsed_resolutiondate", freq= "2W", origin="start"))
+
+    issue_counts = []
+
+    for _, df in grouped:
+        if (len(df.index) == 0):
+            continue
+        issue_counts.append(len(df.index))
+
+    return int(math.ceil(np.mean(issue_counts)))
+
+def get_velocity_for_user(project, username, dataset):
+
+    done = get_done_issues(dataset)
+
+    user_issues = done.loc[(done["project"] == project) & (done["assignee.name"] == username) & (done["resolutiondate"].notnull())]
+
+    return get_velocity(user_issues)
+	
+
+
