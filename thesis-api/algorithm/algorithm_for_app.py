@@ -59,11 +59,11 @@ def get_velocity_for_user(project, username, dataset):
 
 	grouped = user_issues.groupby(pd.Grouper(key="parsed_resolutiondate", freq= "2W", origin="start"))
  
-	storypoints = []
+	issue_counts = []
  
 	for _, df in grouped:
 		if (len(df.index) == 0):
 			continue
-		storypoints.append(df["storypoints"].mean())
+		issue_counts.append(len(df.index))
   
-	return int(math.ceil(np.mean(storypoints)))
+	return int(math.ceil(np.mean(issue_counts)))
