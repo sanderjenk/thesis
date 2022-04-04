@@ -2,11 +2,11 @@ from helpers import prioritymapper as pm
 from helpers import lda
 import numpy as np
 import pandas as pd
-
-def add_backlog_flag(df):
+import datetime
+def add_backlog_completed_flag(df):
 	done_resolutions = ["Done", "Fixed", "Complete", "Resolved", "Implemented"]
 
-	backlog_statuses = ["Open", "To Do", "New", "Backlog"]
+	backlog_statuses = ["Open", "To Do", "New", "Backlog", "To Develop", "Ready for Work"]
 
 	df["backlog"]= df.apply(lambda x: (x["status.name"] in backlog_statuses), axis = 1)
  
@@ -17,7 +17,9 @@ def add_backlog_flag(df):
 	return df
 
 def project_tolower(df):
+    
     df['project'].str.lower()
+    
     return df
 
 def merge_desc_sum(df):
@@ -32,40 +34,20 @@ def merge_desc_sum(df):
 
 def cols(df):
     
-	df = df[["created", "assignee.name", "priority", "status.name",	"text", "storypoints", "project", "resolutiondate", "description", "summary", "key", "businessvalue", "businessvalue_normalized"]]
+	df = df[["created", "assignee.name", "priority_normalized", "status.name",	"text", "storypoints", "project", "resolutiondate", "description", "summary", "key"]]
 
 	return df
 
-def fix_storypoints(df):
-    
-	storypoints_projects = ["xd", "tistud", "timob", "nexus", "mule", "mesos", "dnn", "apstud"]
-
-	df = df.drop(df[(df["storypoints"] == 0) | (df["storypoints"].isna()) & df["project"].isin(storypoints_projects)].index)
-
-	df.loc[~df["project"].isin(storypoints_projects), "storypoints"] = 1
- 
-	return df
-
-def map_priorities(df):
+def add_businessvalue(df):
     
 	df["priority"]= df.apply(lambda x: pm.mapPriority(x["project"], x["priority.name"]), axis = 1)
- 
-	return df
 
-def calculate_business_values(df):
-    
-	df['businessvalue'] = df['storypoints'] * df['priority']
- 
-	return df
+	min = df["priority"].min()
 
-def normalize_column(df, column_name):
-    
-	min = df[column_name].min()
- 
-	max = df[column_name].max()
- 
-	df[column_name + "_normalized"] = df.apply(lambda x: normalize(x[column_name], min, max), axis = 1)
- 
+	max = df["priority"].max()
+
+	df["businessvalue"] = df.apply(lambda x: normalize(x["priority"], min, max), axis = 1)
+
 	return df
 
 def normalize(value, min, max):
@@ -78,30 +60,29 @@ def remove_outliers(df, col):
  
 	return df
 
+def parse_resolution_date(df):
+
+	df["parsed_resolutiondate"] = df.apply(lambda x: datetime.datetime.strptime(x["resolutiondate"], '%Y-%m-%dT%H:%M:%S.%f%z'), axis = 1)
+
+	return df
+
 def preprocess(df):
 	df = project_tolower(df)
-	print("add_backlog_flag")
-	df = add_backlog_flag(df)
-	print("map_priorities")
 
-	df = map_priorities(df)
-	print("fix_storypoints")
+	print("add_backlog_completed_flag")
 
-	df = fix_storypoints(df)
-	print("remove_outliers")
+	df = add_backlog_completed_flag(df)
 
-	df = remove_outliers(df, "storypoints")
-	print("calculate_business_values")
+	print("add_businessvalue")
 
-	df = calculate_business_values(df)
+	df = add_businessvalue(df)
+
 	print("merge_desc_sum")
 
 	df = merge_desc_sum(df)
+
 	print("add_preprocessed_text")
-
+ 
 	df = lda.add_preprocessed_text(df)
-	print("normalize_column")
-
-	df = normalize_column(df, "businessvalue")
 
 	return df

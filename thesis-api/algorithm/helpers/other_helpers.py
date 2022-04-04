@@ -87,7 +87,9 @@ def get_hyperparameters(project):
 def get_velocity(user_issues):
     
     user_issues["parsed_resolutiondate"] = user_issues.apply(lambda x: datetime.datetime.strptime(x["resolutiondate"], '%Y-%m-%dT%H:%M:%S.%f%z'), axis = 1)
-
+    
+    user_issues["parsed_resolutiondate"] = pd.to_datetime(user_issues['parsed_resolutiondate'], utc=True)
+    
     grouped = user_issues.groupby(pd.Grouper(key="parsed_resolutiondate", freq= "2W", origin="start"))
 
     issue_counts = []

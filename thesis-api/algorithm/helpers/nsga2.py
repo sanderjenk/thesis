@@ -9,19 +9,19 @@ from pymoo.visualization.scatter import Scatter
 class Issues(Problem):
     def __init__(self,
                  n_items,  # number of items that can be picked up
-                 S,  # story points of each issue
+                 C,  # count of each issue (all 1s)
                  B,  # business value of each issue
                  I,  # Issue similarity to user experience
                  N,  # Issue novelty
-                 C,  # maximum story points
+                 V,  # velocity
                  ):
         super().__init__(n_var=n_items, n_obj=1, n_constr=1, xl=0, xu=100, type_var=bool)
 
-        self.S = S
+        self.C = C
         self.B = B
         self.I = I
         self.N = N
-        self.C = C
+        self.V = V
 
     def _evaluate(self, x, out, *args, **kwargs):
         f1 = - anp.sum(self.B * x, axis=1)
@@ -29,11 +29,11 @@ class Issues(Problem):
         f3 = - anp.sum(self.N * x, axis=1)
 
         out["F"] = anp.column_stack([f1, f2, f3])
-        out["G"] = (anp.sum(self.S * x, axis=1) - self.C)
-        
-def get_problem(storypoints, businessvalue, issue_similarity, novelty, max_story_points):
-    
-    return Issues(len(storypoints), storypoints, businessvalue, issue_similarity, novelty, max_story_points)
+        out["G"] = (anp.sum(self.C * x, axis=1) - self.V)
+
+def get_problem(businessvalue, issue_similarity, novelty, velocity):
+    counts = [1] * len(businessvalue)
+    return Issues(len(counts), counts, businessvalue, issue_similarity, novelty, velocity)
 
 def get_optimization_result(problem):
     

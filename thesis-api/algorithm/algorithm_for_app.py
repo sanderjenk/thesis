@@ -9,21 +9,19 @@ import math
 from pymoo.visualization.scatter import Scatter
 import matplotlib as plt
 
-def optimize(backlog, user_experience_vector, storypoints):
+def optimize(backlog, user_experience_vector, velocity):
 
 	backlog["issue_similarity"] = backlog.apply(lambda x: h.cosine_similarity_with_intersection(user_experience_vector, x["vector"]), axis = 1)
  
 	backlog["novelty"] = backlog.apply(lambda x: h.calculate_novelty(user_experience_vector, x["vector"]), axis = 1)
  
-	businessvalue_array = backlog["businessvalue_normalized"].to_numpy()
- 
-	storypoints_array = backlog["storypoints"].to_numpy()
- 
+	businessvalue_array = backlog["businessvalue"].to_numpy()
+  
 	issue_similarity_array = backlog["issue_similarity"].to_numpy()
  
 	novelty_array = backlog["novelty"].to_numpy()
  
-	problem = nsga2.get_problem(storypoints_array, businessvalue_array, issue_similarity_array, novelty_array, storypoints)
+	problem = nsga2.get_problem(businessvalue_array, issue_similarity_array, novelty_array, velocity)
 
 	res = nsga2.get_optimization_result(problem)
  
@@ -51,19 +49,4 @@ def generate_solution_for_user(project, dataset, issues_done_by_user, storypoint
 
 def get_velocity_for_user(project, username, dataset):
  
-	done = h.get_done_issues(dataset)
- 
-	user_issues = done.loc[(done["project"] == project) & (done["assignee.name"] == username) & (done["resolutiondate"].notnull())]
- 
-	user_issues["parsed_resolutiondate"] = user_issues.apply(lambda x: datetime.datetime.strptime(x["resolutiondate"], '%Y-%m-%dT%H:%M:%S.%f%z'), axis = 1)
-
-	grouped = user_issues.groupby(pd.Grouper(key="parsed_resolutiondate", freq= "2W", origin="start"))
- 
-	issue_counts = []
- 
-	for _, df in grouped:
-		if (len(df.index) == 0):
-			continue
-		issue_counts.append(len(df.index))
-  
-	return int(math.ceil(np.mean(issue_counts)))
+	return h.get_velocity_for_user(project, username, dataset)
