@@ -63,28 +63,11 @@ if __name__ == '__main__':
     problem = get_problem(storypoints, businessvalue, issue_similarity, novelty, 3)
     res = get_optimization_result(problem)
     print(res.F)
-    print(res.algorithm.opt.get("F"))
     best_solution_indices = res.X.astype(np.int)
     
     hv = get_performance_indicator("hv", ref_point=np.array([1, 1, 1]))
-    print("hv", hv.do(res.F), res.X.astype(np.int))
-    print("hv", hv.do(res.pop[0].F), res.pop[0].X.astype(np.int))
-    print("hv", hv.do(res.pop[1].F), res.pop[1].X.astype(np.int))
-    print("hv", hv.do(res.pop[2].F), res.pop[2].X.astype(np.int))
-    pass
-    
-    # dataset = pd.read_csv('./thesis-api/dataset/preprocessed_dataset.csv', encoding='utf-8')
-    
-    # dataset = pd.read_csv('./thesis-api/dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
-
-
-    # # dataset["preprocessed_text"] = dataset["preprocessed_text"].apply(literal_eval)
-    
-    # df = dataset.loc[(dataset["project"] == "STL") & (dataset["assignee.name"].isna())]
-    
-    # print(df[["resolution.name", "status.name", "assignee.name"]].head(50))
-    
-    # grouped = df.groupby("assignee.name")
-    
-    # for status, frame in grouped:
-    #     print(status)
+    print(type(res.F))
+    print("hv", hv.do(res.F))
+    print("hv", hv.do(res.F[0]), res.F[0])
+    print("hv", hv.do(res.F[1]),  res.F[1])
+    print("hv", hv.do(np.array([-6.6, -1.4, -0.5])))
