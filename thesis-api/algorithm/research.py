@@ -4,6 +4,7 @@ import helpers.nsga2 as nsga2
 from helpers.terminator import HVTermination
 import numpy as np
 import helpers.other_helpers as h
+import helpers.preprocessing as pp
 from ast import literal_eval
 from pymoo.factory import get_crossover, get_mutation, get_sampling, get_performance_indicator
 from pymoo.factory import get_crossover, get_mutation, get_sampling
@@ -12,6 +13,8 @@ from pymoo.algorithms.moo.nsga2 import NSGA2
 import tqdm
 import glob
 import time
+import matplotlib.pyplot as plt
+
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -77,7 +80,7 @@ def save_results():
 
 	for project, project_df in grouped_projects: 
 		
-		if (project == "MDL"):
+		if (project in ["MDL"]):
 			continue
 
 		print(project)
@@ -111,6 +114,7 @@ def save_results():
 		grouped_users = done.groupby("assignee.name")
 
 		for user, user_df in grouped_users: 
+
 			print(user)
 		
 			if (len(user_df.index) < 1):
@@ -140,16 +144,72 @@ def save_results():
 						
 		pd.DataFrame(results).to_csv('./thesis-api/algorithm/validation/' + project.lower() + '.csv', index=False)
 
-def combine_validation():
+def weighted_average(dataframe, value, weight):
+    val = dataframe[value]
+    wt = dataframe[weight]
+    return (val).sum() / wt.sum()
+
+
+def result_stats():
 		
 	df_list = [pd.read_csv(filename) for filename in glob.glob("./thesis-api/algorithm/validation/*.csv")]
 	
 	df = pd.concat(df_list, axis=0)
  
-	grouped = df.groupby("project")["hypervolume"].mean()
+	df["weighted_hv"] = df["hypervolume"] / df["velocity"]
  
+	grouping = df.groupby("project")
+ 
+	wt_average = grouping.apply(weighted_average, "hypervolume", 'velocity')
+ 
+	grouped = grouping.agg(Min=("weighted_hv", np.min), Max=("weighted_hv", np.max),Std=("weighted_hv", np.std))
+ 
+	grouped["Weighted Avg"] = wt_average
+ 
+	grouped = grouped.round(2)
+
 	pd.DataFrame(grouped).to_csv('./thesis-api/algorithm/validation/mean_project_hv.csv')
-    
+ 
+def performance_stats():
+	df_list = [pd.read_csv(filename) for filename in glob.glob("./thesis-api/algorithm/validation/*.csv")]
+
+	df = pd.concat(df_list, axis=0)
+
+	grouping = df.groupby("project")
+
+	aggregated = grouping.agg(lda_s=("lda_execution_time", np.min), max_opt_s=("opt_execution_time", np.max), min_opt_a=("opt_execution_time", np.min), std_opt_s = ("opt_execution_time", np.std))
+
+	dataset = pd.read_csv('./thesis-api/dataset/preprocessed_dataset.csv', encoding='utf-8')
+ 
+	backlog = h.get_backlog_issues(dataset)
+ 
+	aggregated['backlog'] = backlog.groupby("project").size()
+ 
+	done = h.get_done_issues(dataset)
+ 
+	aggregated['done'] = done.groupby("project").size()
+ 
+	aggregated = aggregated.round(2)
+ 
+	pd.DataFrame(aggregated).to_csv('./thesis-api/algorithm/validation/project_execution_time.csv')
+ 
+def plot_number_of_topics_hypervolume():
+	params_df = pd.read_csv('./thesis-api/algorithm/lda_tuning_results/lda_params.csv', encoding='utf-8')
+
+	params_df = params_df.loc[params_df["project"] != "mdl"]
+	hv_df = pd.read_csv('./thesis-api/algorithm/validation/mean_project_hv.csv', encoding='utf-8')
+ 
+	plt.figure(figsize=(7, 5))
+	plt.scatter(params_df["topics"], hv_df["Weighted Avg"],  facecolor="red", edgecolor='black', marker="o")
+
+	plt.title("Number of topics in relation to hypervolume")
+	plt.xlabel("Topics")
+	plt.ylabel("Hypervolume")
+	plt.savefig('./thesis-api/algorithm/validation/topics_hypervolume_plot.png')
   
 if __name__ == '__main__':
 	save_results()
+	result_stats()
+	performance_stats()
+	plot_number_of_topics_hypervolume()
+ 
