@@ -17,7 +17,7 @@ class HVTermination(SlidingWindowTermination):
 
         super().__init__(metric_window_size=n_last,
                          data_window_size=2,
-                         min_data_for_metric=20,
+                         min_data_for_metric=2,
                          nth_gen=nth_gen,
                          n_max_gen=n_max_gen,
                          n_max_evals=n_max_evals,
@@ -26,7 +26,6 @@ class HVTermination(SlidingWindowTermination):
 
     def _store(self, algorithm):
         return algorithm.opt.get("F")
-
 
     def _metric(self, data):
         return Hypervolume([1.1, 1.1, 1.1]).do(data[-1])
