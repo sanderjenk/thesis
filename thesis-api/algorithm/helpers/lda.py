@@ -66,7 +66,7 @@ def get_lda_model(done_issues_df, number_of_topics, alpha, beta):
     
     dictionary = get_dictionary(preprocessed_docs) 
 
-    dictionary.filter_extremes(no_below=15, no_above=0.7, keep_n=100000)
+    dictionary.filter_extremes()
 
     bow_corpus = get_bow_corpus(dictionary, preprocessed_docs)
 

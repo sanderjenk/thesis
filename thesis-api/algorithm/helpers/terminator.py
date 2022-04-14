@@ -31,4 +31,4 @@ class HVTermination(SlidingWindowTermination):
         return Hypervolume([1.1, 1.1, 1.1]).do(data[-1])
 
     def _decide(self, metrics):
-        return (to_numpy(metrics).max() - to_numpy(metrics).min())> self.tol
+        return (to_numpy(metrics).max() - to_numpy(metrics).min()) > self.tol

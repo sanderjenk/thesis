@@ -67,11 +67,21 @@ def parse_resolution_date(df):
 	return df
 
 def preprocess(df):
+	nr_of_issues = len(df.index)
+ 
+	print("starting nr of issues", nr_of_issues)
+ 
 	df = project_tolower(df)
-
+ 
 	print("add_backlog_completed_flag")
 
 	df = add_backlog_completed_flag(df)
+ 
+	nr_of_issues2 = len(df.index)
+
+	print("after backlog and done filtering", nr_of_issues2)
+ 
+	print("removed", nr_of_issues - nr_of_issues2)
 
 	print("add_businessvalue")
 
