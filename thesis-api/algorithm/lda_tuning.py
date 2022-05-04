@@ -8,19 +8,21 @@ import helpers.preprocessing as pp
 if __name__ == '__main__':
 
 	# Read data into df
-	dataset = pd.read_csv('../dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
+	dataset = pd.read_csv('./thesis-api/dataset/bondora/tasks.csv', encoding='utf-8')
+	print(dataset.head())
 
 	dataset = pp.preprocess(dataset)
 
 	topics_range, alpha, beta = lda.get_parameter_lists()
+	print(dataset.head())
 
 	grouped = dataset.groupby("project")
 
-	for project, df in grouped:
+	for project, df in grouped:    
 
 		df = df.sample(200)
-		
-		preprocessed_docs = lda.get_preprocessed_docs(df)
+  
+		preprocessed_docs = df["preprocessed_text"]
 
 		id2word = lda.get_dictionary(preprocessed_docs) 
 
@@ -66,5 +68,5 @@ if __name__ == '__main__':
 						
 						pbar.update(1)
 
-		pd.DataFrame(model_results).to_csv('./lda_tuning_results/' + project.lower() + '_' + 'lda_tuning_results.csv', index=False)
+		pd.DataFrame(model_results).to_csv('./thesis-api/algorithm/lda_tuning_results/' + project.lower() + '_' + 'lda_tuning_results.csv', index=False)
 		pbar.close()

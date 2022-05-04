@@ -9,6 +9,8 @@ def add_backlog_completed_flag(df):
 	backlog_statuses = ["Open", "To Do", "New", "Backlog", "To Develop", "Ready for Work"]
 
 	df["backlog"]= df.apply(lambda x: (x["status.name"] in backlog_statuses), axis = 1)
+
+	# df["backlog"]= df.apply(lambda x: ((pd.isna(x["assignee.name"])) &(x["status.name"] in backlog_statuses)), axis = 1)
  
 	df["done"] = df.apply(lambda x: ((pd.notna(x["assignee.name"])) & (x["resolution.name"]in done_resolutions)), axis = 1)
  

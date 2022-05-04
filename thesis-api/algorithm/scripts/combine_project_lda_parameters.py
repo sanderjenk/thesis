@@ -1,8 +1,16 @@
 import pandas as pd
 import glob
 
-if __name__ == '__main__':
+def bondora():
+	df = pd.read_csv('./thesis-api/algorithm/lda_tuning_results/bondora_lda_tuning_results.csv', index_col=None, header=0)
 
+	index = df['Coherence'].idxmax()
+
+	row = df.iloc[index]
+ 
+	print(row)
+ 
+def combine_lda_params():
 	dataset = pd.read_csv('./thesis-api/dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
 
 	projects = dataset.groupby("project")
@@ -24,3 +32,9 @@ if __name__ == '__main__':
 	result["beta"] = result["beta"].applymap(lambda x: round(x, 2) if isinstance(x, (int, float)) else x)
 
 	result.to_csv('./thesis-api/algorithm/lda_tuning_results/lda_params.csv', index=False)
+ 
+
+
+if __name__ == '__main__':
+	bondora()
+	
