@@ -5,6 +5,7 @@ from ast import literal_eval
 import glob
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+pd.options.mode.chained_assignment = None  # default='warn'
 
 def plot_number_of_topics_hypervolume():
 	params_df = pd.read_csv('./thesis-api/algorithm/lda_tuning_results/lda_params.csv', encoding='utf-8')
@@ -15,22 +16,22 @@ def plot_number_of_topics_hypervolume():
 	plt.figure(figsize=(7, 5))
 	plt.scatter(params_df["topics"], hv_df["Weighted Avg"],  facecolor="red", edgecolor='black', marker="o")
 	for i, label in enumerate(hv_df["project"].tolist()):
-		plt.annotate(label, (params_df["topics"].tolist()[i], hv_df["Weighted Avg"].tolist()[i]))
+		plt.annotate(label.upper(), (params_df["topics"].tolist()[i], hv_df["Weighted Avg"].tolist()[i]))
 	plt.title("Number of topics in relation to hypervolume")
 	plt.xlabel("Topics")
 	plt.ylabel("Hypervolume")
-	plt.savefig('./thesis-api/algorithm/validation/plots/topics_hypervolume_plot.png')
+	plt.savefig('./thesis-api/algorithm/validation/plots2/topics_hypervolume_plot.png')
  
 def barchart():
 	hv_df = pd.read_csv('./thesis-api/algorithm/validation/grouped/mean_project_hv.csv', encoding='utf-8')
 	plt.figure(figsize=(7, 5))
-	plt.bar(hv_df["project"], hv_df["Weighted Avg"])
+	plt.bar(hv_df["project"].str.upper(), hv_df["Weighted Avg"])
 	plt.xticks(rotation=90)
 	plt.ylabel("Weighted average of hypervolume")
 	plt.title("Weighted average hypervolume of projects")
 	plt.gcf().subplots_adjust(bottom=0.18)
 
-	plt.savefig('./thesis-api/algorithm/validation/bar_hypervolume.png')
+	plt.savefig('./thesis-api/algorithm/validation/plots2/bar_hypervolume.png')
  
 def plot_performance_velocity():
 	projects = pd.read_csv('./thesis-api/algorithm/validation/grouped/project_execution_time.csv', encoding='utf-8')
@@ -47,11 +48,21 @@ def plot_performance_velocity():
  
 	df["y"] = (df["opt_execution_time"] / df["mean_opt_s"]) * 100
  
+	# colors = ["#2f4f4f", "#006400", "#00008b", "#48d1cc", "#ff0000", "#ffa500", "#ffff00", "#00ff00", "#00fa9a", "#0000ff", "#d8bfd8", "#ff00ff", "#1e90ff", "#f0e68c", "#fa8072"]
+ 
+	# grouped_projects = df.groupby("project")
+	# i = 0
+	# for project, project_df in grouped_projects: 
+ 
+	# 	plt.scatter(project_df["velocity"], project_df["y"],  facecolor=colors[i], edgecolor='black', marker=".")
+	# 	i += 1
+  	
 	plt.scatter(df["velocity"], df["y"],  facecolor="red", edgecolor='black', marker=".")
-
 	plt.xlabel("Velocity")
 	plt.ylabel("Dev. opt. time percentage from project mean")
-	plt.savefig('./thesis-api/algorithm/validation/plots/scatter_opt_velocity.png')
+	plt.savefig('./thesis-api/algorithm/validation/plots2/scatter_opt_velocity.png')
+ 
+
  
 def plot_performance_lda():
 	df = pd.read_csv('./thesis-api/algorithm/validation/grouped/project_execution_time.csv', encoding='utf-8')
@@ -65,11 +76,11 @@ def plot_performance_lda():
 	plt.scatter(df["done"], df["lda_s"],  facecolor="red", edgecolor='black', marker="o")
  
 	for i, label in enumerate(df["project"].tolist()):
-		plt.annotate(label, (donelist[i], ldalist[i]))
+		plt.annotate(label.upper(), (donelist[i], ldalist[i]))
   
 	plt.xlabel("Number of done issues")
 	plt.ylabel("LDA training time in seconds")
-	plt.savefig('./thesis-api/algorithm/validation/plots/scatter_lda_done.png')
+	plt.savefig('./thesis-api/algorithm/validation/plots2/scatter_lda_done.png')
  
 def plot_performance_opt():
 	df = pd.read_csv('./thesis-api/algorithm/validation/grouped/project_execution_time.csv', encoding='utf-8')
@@ -83,11 +94,30 @@ def plot_performance_opt():
 	plt.scatter(df["backlog"], df["mean_opt_s"],  facecolor="red", edgecolor='black', marker="o")
  
 	for i, label in enumerate(df["project"].tolist()):
-		plt.annotate(label, (backloglist[i], optlist[i]))
+		plt.annotate(label.upper(), (backloglist[i], optlist[i]))
   
 	plt.xlabel("Number of backlog issues")
 	plt.ylabel("Optimization time in seconds")
-	plt.savefig('./thesis-api/algorithm/validation/plots/scatter_opt_backlog.png')
+	plt.savefig('./thesis-api/algorithm/validation/plots2/scatter_opt_backlog.png')
+ 
+def plot_hv_backlog():
+	df = pd.read_csv('./thesis-api/algorithm/validation/grouped/mean_project_hv.csv', encoding='utf-8')
+	df2 = pd.read_csv('./thesis-api/algorithm/validation/grouped/project_execution_time.csv', encoding='utf-8')
+
+	plt.figure(figsize=(7, 5))
+ 
+	backloglist = df2["backlog"].tolist()
+ 
+	hv = df["Weighted Avg"].tolist()
+ 
+	plt.scatter(df2["backlog"], df["Weighted Avg"],  facecolor="red", edgecolor='black', marker="o")
+ 
+	for i, label in enumerate(df["project"].tolist()):
+		plt.annotate(label.upper(), (backloglist[i], hv[i]))
+  
+	plt.xlabel("Number of backlog issues")
+	plt.ylabel("Optimization time in seconds")
+	plt.savefig('./thesis-api/algorithm/validation/plots2/scatter_hv_backlog.png')
  
 def generate_word_clouds():
 	dataset = pd.read_csv('./thesis-api/dataset/preprocessed_dataset.csv', encoding='utf-8')
@@ -112,13 +142,14 @@ def generate_word_clouds():
 			plt.imshow(WordCloud(width = 800, height= 300, background_color= "white").fit_words(dict(lda_model.show_topic(t, 200))))
 			plt.axis("off")
 			plt.title("Topic #" + str(t+1))
-			plt.savefig('./thesis-api/algorithm/validation/plots/wordcloud_' + project + str(t+1) +  '.png')
+			plt.savefig('./thesis-api/algorithm/validation/plots2/wordcloud_' + project + str(t+1) +  '.png')
    
 if __name__ == '__main__':
 	# plot_number_of_topics_hypervolume()
 	# barchart()
 	# generate_word_clouds()
-	# plot_performance_lda()
+	plot_performance_lda()
 	# plot_performance_opt()
 	# plot_performance_velocity()
+	# plot_hv_backlog()
 	pass

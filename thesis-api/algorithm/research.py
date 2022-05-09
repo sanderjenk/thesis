@@ -150,7 +150,7 @@ def result_stats():
  
 	grouped = grouped.round(2)
 
-	pd.DataFrame(grouped).to_csv('./thesis-api/algorithm/validation/grouped/mean_project_hv.csv')
+	pd.DataFrame(grouped).to_csv('./thesis-api/algorithm/validation/grouped/mean_project_hv_test.csv')
  
 def performance_stats():
 	df_list = [pd.read_csv(filename) for filename in glob.glob("./thesis-api/algorithm/validation/*.csv")]
@@ -173,7 +173,7 @@ def performance_stats():
  
 	aggregated = aggregated.round(2)
  
-	pd.DataFrame(aggregated).to_csv('./thesis-api/algorithm/validation/grouped/project_execution_time.csv')
+	pd.DataFrame(aggregated).to_csv('./thesis-api/algorithm/validation/grouped/project_execution_time_test.csv')
  
    
 def issue_counts():
@@ -234,8 +234,8 @@ def issue_counts():
   
 if __name__ == '__main__':
 	# save_results()
-	# result_stats()
-	# performance_stats()
+	result_stats()
+	performance_stats()
 	# plot_number_of_topics_hypervolume()
 	# barchart()
 	# generate_word_clouds()

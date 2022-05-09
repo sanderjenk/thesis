@@ -1,4 +1,5 @@
 from cProfile import label
+from matplotlib import tight_layout
 import pandas as pd
 import helpers.lda as lda
 import helpers.nsga2 as nsga2
@@ -14,6 +15,7 @@ import gensim
 import matplotlib.pyplot as plt
 from pymoo.visualization.scatter import Scatter
 import plot_likert
+from pymoo.visualization.petal import Petal
 
 def get_optimization_result(backlog, user_experience_vector, storypoints):
 
@@ -86,15 +88,15 @@ def save_bondora_results():
  
 	number_of_topics, alpha, beta = h.get_hyperparameters("BONDORA")
 
-	lda_model, dictionary = lda.get_lda_model(done, number_of_topics, alpha, beta)
+	# lda_model, dictionary = lda.get_lda_model(done, number_of_topics, alpha, beta)
 
 	# lda_model.save("./thesis-api/dataset/Alpha_lda")
 
 	# dictionary.save("./thesis-api/dataset/Alpha_dict")
 
-	# dictionary = gensim.corpora.Dictionary.load("./thesis-api/dataset/Alpha_dict")
+	dictionary = gensim.corpora.Dictionary.load("./thesis-api/dataset/Alpha_dict")
 
-	# lda_model = gensim.models.LdaMulticore.load("./thesis-api/dataset/Alpha_lda")
+	lda_model = gensim.models.LdaMulticore.load("./thesis-api/dataset/Alpha_lda")
 	
 	backlog = lda.add_topic_vector_to_baclog_issues(backlog, lda_model, dictionary, number_of_topics)
 
@@ -146,15 +148,12 @@ def save_bondora_results():
 		results['opt_execution_time'].append(opt_execution_time)
 		results['lda_execution_time'].append(lda_execution_time)
   
-		index = get_best_task_index(res.F)
+		# index = get_best_task_index(res.F)
   
-		tasks = h.get_individuals_by_bit_array(backlog, res.X[index].astype(np.int))
-		print(results)
-		break
+		# tasks = h.get_individuals_by_bit_array(backlog, res.X[index].astype(np.int))
   
 		# tasks[["summary", "permalink_url"]].to_csv("./thesis-api/dataset/bondora/generated/" + user + '.csv', index = False)
-  
-	# pd.DataFrame(results).to_csv('./thesis-api/dataset/bondora/' + project.lower() + '_validation.csv', index=False)
+	pd.DataFrame(results).to_csv('./thesis-api/dataset/bondora/' + project.lower() + '_validation.csv', index=False)
  
 def get_from_backlog_based_on_links(backlog, link_series):
 
@@ -199,6 +198,7 @@ def compare_answers_to_gen():
 	grouped_users = done.groupby("assignee.name")
 
 	for user, user_df in grouped_users: 
+		# if user not in ["Saul Talve"]:
 		if user not in ["Mihkel Põldoja", "Henri Vasserman", "Janek Kossinski", "Kaarel Roben", "Saul Talve"]:
 			continue
 
@@ -222,15 +222,18 @@ def compare_answers_to_gen():
   
 		picked_issues = get_from_backlog_based_on_links(user_backlog, picked_links["permalink_url"])
 	
-		# generated = pd.read_csv("./thesis-api/dataset/bondora/generated/" + user + ".csv")
-		# generated_issues = get_from_backlog_based_on_links(user_backlog, generated["permalink_url"])
+		generated = pd.read_csv("./thesis-api/dataset/bondora/generated_final/" + user + ".csv")
+		generated_issues = get_from_backlog_based_on_links(user_backlog, generated["permalink_url"])
   
 		# print("picked", picked_issues[["summary", "novelty", "issue_similarity", "businessvalue"]].head())
 		# print("generated", generated_issues[["summary", "novelty", "issue_similarity", "businessvalue"]].head())
 		
 		picked_F = np.array([-picked_issues["businessvalue"].sum(), -picked_issues["issue_similarity"].sum(), -picked_issues["novelty"].sum()])
-		# generated_F = np.array([-generated_issues["issue_similarity"].sum(), -generated_issues["businessvalue"].sum(), -generated_issues["novelty"].sum()])
+		generated_F = np.array([-generated_issues["businessvalue"].sum(), -generated_issues["issue_similarity"].sum(), -generated_issues["novelty"].sum()])
 
+		print(picked_F)
+		print(generated_F)
+  
 		indicator = get_performance_indicator("gd", res.F)
 
 		distance =  indicator.do(picked_F)
@@ -243,16 +246,27 @@ def compare_answers_to_gen():
   
 		pf_without_best = np.delete(res.F, best_index, axis=0)
   
-		print(res.F)
-		print(pf_without_best)
+		# print(res.F)
+		# print(pf_without_best)
   
-		plot = Scatter()
-		plot.add(pf_without_best, s=40, color="blue", label="Individual in PF")
-		plot.add(picked_F, s=40, color="red", label="Picked")
-		plot.add(res.F[best_index], s=40, color="green", label="Best (also in PF)")
-		plot.legend = True
-		# plot.save("./thesis-api/dataset/bondora/pf_plots/" + user)
+		test = res.F[best_index]
   
+		# plot = Scatter()
+		# plot.add(pf_without_best, s=40, color="blue", label="Individual in PF")
+		# plot.add(picked_F, s=40, color="red", label="Picked")
+		# plot.add(res.F[best_index], s=40, color="green", label="Best (also in PF)")
+		# plot.legend = True
+		# # plot.save("./thesis-api/dataset/bondora/pf_plots/" + user)
+  
+		plot = Petal(bounds=[0,velocity], tight_layout=True, title=["Picked", "Generated"], labels=["business value", "experience", "novelty"])
+		plot.title
+		plot.add(picked_F * -1)
+		plot.add(generated_F * -1)
+		plot.show()
+		# plot.save("./thesis-api/dataset/bondora/petal_plots/" + user)
+
+  
+	print(results["picked_distance_from_pf"])
 	# pd.DataFrame(results).to_csv('./thesis-api/dataset/bondora/picked_distance_from_pf.csv', index=False)
 
 def likert_plots():

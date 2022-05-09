@@ -1,4 +1,5 @@
 project,topics,alpha,beta,coherence
+bondora,8,asymmetric,symmetric,0.40
 compass,5,symmetric,0.31,0.33
 datacass,3,0.9099999999999999,0.31,0.49
 fab,10,0.9099999999999999,0.31,0.37
@@ -14,4 +15,3 @@ nexus,7,0.31,0.61,0.47
 timob,10,0.9099999999999999,0.31,0.56
 tistud,9,0.9099999999999999,0.9099999999999999,0.63
 xd,2,asymmetric,symmetric,0.47
-bondora,8,asymmetric,symmetric,0.40
