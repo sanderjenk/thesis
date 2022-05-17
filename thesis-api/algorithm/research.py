@@ -53,7 +53,7 @@ def save_results():
 
 	for project, project_df in grouped_projects: 
 		
-		if (project not in ["MDL"]):
+		if (project not in ["COMPASS"]):
 			continue
 
 		print(project)
@@ -86,8 +86,8 @@ def save_results():
 		grouped_users = done.groupby("assignee.name")
 
 		for user, user_df in grouped_users: 
-		# 	if user not in ["anna.herlihy", "brian.blevins"]:
-		# 		continue
+			if user not in ["durran.jordan", "anna.herlihy"]:
+				continue
 
 			print(user)
 		
@@ -105,6 +105,8 @@ def save_results():
 
 			res = get_optimization_result(backlog, vector, velocity)
    
+			print(res.F)
+   
 			hv_indicator = get_performance_indicator("hv", ref_point=np.array([1.1, 1.1, 1.1]))
  
 			hypervolume =  hv_indicator.do(res.F)
@@ -119,8 +121,9 @@ def save_results():
 			results['velocity'].append(velocity)
 			results['opt_execution_time'].append(opt_execution_time)
 			results['lda_execution_time'].append(lda_execution_time)
+			print(results["hypervolume"])
 						
-		pd.DataFrame(results).to_csv('./thesis-api/algorithm/validation/' + project.lower() + '.csv', index=False)
+		# pd.DataFrame(results).to_csv('./thesis-api/algorithm/validation/' + project.lower() + '.csv', index=False)
 
 
 
@@ -233,14 +236,8 @@ def issue_counts():
 	df.to_csv("./thesis-api/algorithm/validation/grouped/issue_counts.csv")
   
 if __name__ == '__main__':
-	# save_results()
-	result_stats()
-	performance_stats()
-	# plot_number_of_topics_hypervolume()
-	# barchart()
-	# generate_word_clouds()
-	# plot_performance_lda()
-	# plot_performance_opt()
-	# plot_performance_velocity()
+	save_results()
+	# result_stats()
+	# performance_stats()
 	# issue_counts()
 	pass

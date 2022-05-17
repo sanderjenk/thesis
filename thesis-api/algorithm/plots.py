@@ -35,34 +35,52 @@ def barchart():
  
 def plot_performance_velocity():
 	projects = pd.read_csv('./thesis-api/algorithm/validation/grouped/project_execution_time.csv', encoding='utf-8')
+	
 	df_list = [pd.read_csv(filename) for filename in glob.glob("./thesis-api/algorithm/validation/*.csv")]
 
 	df = pd.concat(df_list, axis=0)
  
 	projects.set_index('project', inplace=True)
-
  
 	test = projects["mean_opt_s"].to_dict()
  
 	df["mean_opt_s"] = df["project"].map(test)
  
 	df["y"] = (df["opt_execution_time"] / df["mean_opt_s"]) * 100
- 
-	# colors = ["#2f4f4f", "#006400", "#00008b", "#48d1cc", "#ff0000", "#ffa500", "#ffff00", "#00ff00", "#00fa9a", "#0000ff", "#d8bfd8", "#ff00ff", "#1e90ff", "#f0e68c", "#fa8072"]
- 
-	# grouped_projects = df.groupby("project")
-	# i = 0
-	# for project, project_df in grouped_projects: 
- 
-	# 	plt.scatter(project_df["velocity"], project_df["y"],  facecolor=colors[i], edgecolor='black', marker=".")
-	# 	i += 1
-  	
+   	
 	plt.scatter(df["velocity"], df["y"],  facecolor="red", edgecolor='black', marker=".")
 	plt.xlabel("Velocity")
 	plt.ylabel("Dev. opt. time percentage from project mean")
 	plt.savefig('./thesis-api/algorithm/validation/plots2/scatter_opt_velocity.png')
  
+ 
+def plot_hv_velocity():
+	df_list = [pd.read_csv(filename) for filename in glob.glob("./thesis-api/algorithm/validation/*.csv")]
 
+	df = pd.concat(df_list, axis=0)
+
+	df["y"] = (df["hypervolume"] / df["velocity"])
+
+	plt.scatter(df["velocity"], df["y"],  facecolor="red", edgecolor='black', marker=".")
+	plt.xlabel("Number of issues")
+	plt.ylabel("Per issue HV")
+	plt.savefig('./thesis-api/algorithm/validation/plots2/scatter_hv_velocity.png')
+ 
+def plot_opt_velocity_box():
+	df_list = [pd.read_csv(filename) for filename in glob.glob("./thesis-api/algorithm/validation/*.csv")]
+	df = pd.read_csv('./thesis-api/algorithm/validation/grouped/project_execution_time.csv', encoding='utf-8')
+
+	df = pd.concat(df_list, axis=0)
+ 
+	ax = df.boxplot(column="opt_execution_time", by="velocity")
+	ax.set_title("")
+	fig = ax.get_figure()
+	fig.suptitle('')
+	plt.xlabel("Number of issues")
+	plt.ylabel("Optimization time")
+	plt.savefig('./thesis-api/algorithm/validation/plots2/box_opt_velocity.png')	
+	plt.show()
+ 
  
 def plot_performance_lda():
 	df = pd.read_csv('./thesis-api/algorithm/validation/grouped/project_execution_time.csv', encoding='utf-8')
@@ -128,7 +146,7 @@ def generate_word_clouds():
 
 	for project, project_df in grouped_projects: 
 		
-		if (project not in ["DATACASS"]):
+		if (project not in ["xd"]):
 			continue
 
 		done = h.get_done_issues(project_df)
@@ -147,9 +165,11 @@ def generate_word_clouds():
 if __name__ == '__main__':
 	# plot_number_of_topics_hypervolume()
 	# barchart()
-	# generate_word_clouds()
-	plot_performance_lda()
+	generate_word_clouds()
+	# plot_performance_lda()
 	# plot_performance_opt()
 	# plot_performance_velocity()
 	# plot_hv_backlog()
+	# plot_hv_velocity()
+	# plot_opt_velocity_box()
 	pass

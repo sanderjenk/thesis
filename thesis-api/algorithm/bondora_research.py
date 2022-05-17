@@ -231,8 +231,9 @@ def compare_answers_to_gen():
 		picked_F = np.array([-picked_issues["businessvalue"].sum(), -picked_issues["issue_similarity"].sum(), -picked_issues["novelty"].sum()])
 		generated_F = np.array([-generated_issues["businessvalue"].sum(), -generated_issues["issue_similarity"].sum(), -generated_issues["novelty"].sum()])
 
-		print(picked_F)
-		print(generated_F)
+		# print(picked_F)
+		# print(generated_F)
+		print("vector", vector)
   
 		indicator = get_performance_indicator("gd", res.F)
 
@@ -246,7 +247,7 @@ def compare_answers_to_gen():
   
 		pf_without_best = np.delete(res.F, best_index, axis=0)
   
-		# print(res.F)
+		print(res.F)
 		# print(pf_without_best)
   
 		test = res.F[best_index]
@@ -262,11 +263,11 @@ def compare_answers_to_gen():
 		plot.title
 		plot.add(picked_F * -1)
 		plot.add(generated_F * -1)
-		plot.show()
+		# plot.show()
 		# plot.save("./thesis-api/dataset/bondora/petal_plots/" + user)
 
   
-	print(results["picked_distance_from_pf"])
+	# print(results["picked_distance_from_pf"])
 	# pd.DataFrame(results).to_csv('./thesis-api/dataset/bondora/picked_distance_from_pf.csv', index=False)
 
 def likert_plots():
@@ -327,8 +328,8 @@ def likert_plots():
 	ax2.figure.savefig('./thesis-api/dataset/bondora/likert_plots/section3.png')
 
 if __name__ == '__main__':
-	save_bondora_results()
+	# save_bondora_results()
 	# save_bondora_backlog()
-	# compare_answers_to_gen()
+	compare_answers_to_gen()
 	# likert_plots()
  

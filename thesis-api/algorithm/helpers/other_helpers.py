@@ -62,7 +62,7 @@ def calculate_novelty(developer_vector, issue_vector):
 
 def get_hyperparameters(project):
     
-    df = pd.read_csv('./thesis-api/algorithm/lda_tuning_results/lda_params.csv', encoding='utf-8')
+    df = pd.read_csv('./algorithm/lda_tuning_results/lda_params.csv', encoding='utf-8')
 
     row = df.loc[df["project"] == project.lower()].iloc[0]
 

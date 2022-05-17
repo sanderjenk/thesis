@@ -8,6 +8,8 @@ import numpy as np
 import sys
 from ast import literal_eval
 
+pd.options.mode.chained_assignment = None  # default='warn'
+
 sys.path.insert(0, './algorithm')
 sys.path.insert(0, './algorithm/helpers')
 
@@ -24,11 +26,11 @@ mongo = PyMongo(app)
 
 db = mongo.db
 
-dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
+# dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
 
-dataset = pp.preprocess(dataset)
+# dataset = pp.preprocess(dataset)
 
-dataset.to_csv('./dataset/preprocessed_dataset.csv')
+# dataset.to_csv('./dataset/preprocessed_dataset.csv')
 
 dataset = pd.read_csv('./dataset/preprocessed_dataset.csv', encoding='utf-8')
 
