@@ -21,16 +21,10 @@ export class SelectedIssuesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getGeneratedIssues();
-    this.initFeedbackForm();
     this.initGenerateForm();
     this.getDevelopers();
   }
 
-  initFeedbackForm() {
-    this.feedbackForm = new FormGroup({
-      rating: new FormControl(null, [Validators.required])
-    });
-  }
   
   initGenerateForm() {
     this.generateForm = new FormGroup({

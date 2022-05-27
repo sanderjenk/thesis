@@ -43,6 +43,26 @@ def get_optimization_result(backlog, user_experience_vector, storypoints):
   		save_history=True)
  
 	return res
+
+def save_lda_models():
+	dataset = pd.read_csv('./thesis-api/dataset/preprocessed_dataset.csv', encoding='utf-8')
+
+	dataset["preprocessed_text"] = dataset["preprocessed_text"].apply(literal_eval)
+
+	grouped_projects = dataset.groupby("project")
+
+	for project, project_df in grouped_projects: 
+		
+		done = h.get_done_issues(project_df)
+
+		number_of_topics, alpha, beta = h.get_hyperparameters(project)
+
+		lda_model, dictionary = lda.get_lda_model(done, number_of_topics, alpha, beta)
+		
+		lda_model.save("./thesis-api/algorithm/lda_models/" + project)
+
+		dictionary.save("./thesis-api/algorithm/lda_dicts/" + project)
+		
 	
 def save_results():
 	dataset = pd.read_csv('./thesis-api/dataset/preprocessed_dataset.csv', encoding='utf-8')
@@ -236,8 +256,8 @@ def issue_counts():
 	df.to_csv("./thesis-api/algorithm/validation/grouped/issue_counts.csv")
   
 if __name__ == '__main__':
-	save_results()
+	# save_results()
 	# result_stats()
 	# performance_stats()
 	# issue_counts()
-	pass
+ 	save_lda_models()

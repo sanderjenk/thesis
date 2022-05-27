@@ -4,10 +4,7 @@ import helpers.lda as lda
 import helpers.nsga2 as nsga2
 import numpy as np
 import helpers.other_helpers as h
-import datetime
-import math
-from pymoo.visualization.scatter import Scatter
-import matplotlib as plt
+import gensim
 
 from pymoo.factory import get_decomposition
 
@@ -46,14 +43,14 @@ def optimize(backlog, user_experience_vector, velocity):
 
 def generate_solution_for_user(project, dataset, issues_done_by_user, storypoints):
  
-	done = h.get_done_issues(dataset)
-
 	backlog = h.get_backlog_issues(dataset)
  
-	number_of_topics, alpha, beta = h.get_hyperparameters(project)
+	number_of_topics, _, _ = h.get_hyperparameters(project)
  
-	lda_model, dictionary = lda.get_lda_model(done, number_of_topics, alpha, beta)
-	
+	dictionary = gensim.corpora.Dictionary.load("./algorithm/lda_dicts/" + project)
+
+	lda_model = gensim.models.LdaMulticore.load("./algorithm/lda_models/" + project)	
+ 
 	backlog = lda.add_topic_vector_to_baclog_issues(backlog, lda_model, dictionary, number_of_topics)
  
 	vector = lda.get_user_experience_topic_vector(issues_done_by_user, lda_model, dictionary, number_of_topics)
