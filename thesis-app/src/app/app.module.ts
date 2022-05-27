@@ -10,6 +10,7 @@ import { MaterialExampleModule } from './material.module';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { IntroComponent } from './intro/intro.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { IntroComponent } from './intro/intro.component';
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MaterialExampleModule,
+    NgChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent],

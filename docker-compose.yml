@@ -10,13 +10,3 @@ services:
         - "80:80"
     depends_on:
       - api
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    ports:
-      - 27017:27017
-    volumes:
-      - mongodb_data_container:/data/db
-
-volumes:
-  mongodb_data_container:

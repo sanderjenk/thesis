@@ -5,4 +5,5 @@ export interface Issue {
 	priority: string;
 	storypoints: string;
 	project: string;
+	fitness_values: any;
 }

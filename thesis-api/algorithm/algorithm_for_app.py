@@ -9,6 +9,17 @@ import math
 from pymoo.visualization.scatter import Scatter
 import matplotlib as plt
 
+from pymoo.factory import get_decomposition
+
+
+def get_best_task_index(F):
+	weights = np.array([1/3, 1/3, 1/3])
+    
+	decomp = get_decomposition("asf")
+ 
+	I = decomp.do(F, weights).argmin()
+	return I
+
 def optimize(backlog, user_experience_vector, velocity):
 
 	backlog["issue_similarity"] = backlog.apply(lambda x: h.cosine_similarity_with_intersection(user_experience_vector, x["vector"]), axis = 1)
@@ -25,11 +36,13 @@ def optimize(backlog, user_experience_vector, velocity):
 
 	res = nsga2.get_optimization_result(problem)
  
-	best_solution_indices = res.X.astype(np.int)
-
-	best_solution = h.get_individuals_by_bit_array(backlog, best_solution_indices[0])
+	solutions = res.X.astype(np.int)
  
-	return best_solution
+	best_solution_index = get_best_task_index(res.F)
+
+	best_solution = h.get_individuals_by_bit_array(backlog, solutions[best_solution_index])
+ 
+	return best_solution, res.F[best_solution_index]
 
 def generate_solution_for_user(project, dataset, issues_done_by_user, storypoints):
  

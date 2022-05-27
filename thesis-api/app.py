@@ -1,6 +1,5 @@
 from flask import Flask, request, Response
 import pandas as pd
-from flask_pymongo import PyMongo
 import json
 from bson import json_util
 from flask_cors import CORS
@@ -18,13 +17,8 @@ import algorithm.helpers.preprocessing as pp
 
 app = Flask(__name__)
 
-app.config["MONGO_URI"] = "mongodb://localhost:27017/thesis"
-
 CORS(app)
 
-mongo = PyMongo(app)
-
-db = mongo.db
 
 # dataset = pd.read_csv('./dataset/jiradataset_issues_v1.4.csv', encoding='utf-8')
 
@@ -58,7 +52,8 @@ def generate():
 
     user_issues = project_issues.loc[(project_issues["assignee.name"] == username)]
     
-    solution = alg.generate_solution_for_user(project, project_issues, user_issues, int(storypoints))
+    solution, fitness_function_values = alg.generate_solution_for_user(project, project_issues, user_issues, int(storypoints))
+    print(fitness_function_values)
     
     return solution.to_json(orient="records")
 
@@ -81,13 +76,6 @@ def velocity():
     velocity = alg.get_velocity_for_user(project, username, dataset)
     
     return str(velocity)
-
-@app.route('/api/feedback', methods=['POST'])
-def feedback():
-
-    db.feedback.insert_one(request.json)
-
-    return Response(status=201)
 
 def get_json(cursor, issues = False):
     

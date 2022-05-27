@@ -3,6 +3,7 @@ import { IssuesService } from '../issues.service';
 import { Issue } from '../issue';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 
 @Component({
   selector: 'app-selected-issues',
@@ -66,18 +67,26 @@ export class SelectedIssuesComponent implements OnInit {
     })
   }
 
-  submit(){
-    let value = this.feedbackForm.value;
-    let data = {
-      feedbackForm: value,
-      generatedIssues: this.generatedIssues.map(x => x.key)
+  public radarChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    scales: {
+      r: {
+          angleLines: {
+              display: false
+          },
+          suggestedMin: 0,
+          suggestedMax: 3
+      },
     }
-    this.issuesService.submitFeedbackForm(data).subscribe(() => {
-      this.openSnackBar();
-    })
-  }
-  
-  openSnackBar() {
-    this._snackBar.open("Thank you", "Dismiss", {duration: 3000});
-  }
+  };
+
+  public radarChartLabels: string[] = [ 'Business value', 'Experience', 'Novelty'];
+
+  public radarChartData: ChartData<'radar'> = {
+    labels: this.radarChartLabels,
+    datasets: [
+      { data: [2.25,2.99, 2], label: 'Objective values of the solution' }
+    ]
+  };
+  public radarChartType: ChartType = 'radar';
 }

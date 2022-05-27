@@ -162,14 +162,22 @@ def generate_word_clouds():
 			plt.title("Topic #" + str(t+1))
 			plt.savefig('./thesis-api/algorithm/validation/plots2/wordcloud_' + project + str(t+1) +  '.png')
    
+def print_average_optimization_time():
+	df_list = [pd.read_csv(filename) for filename in glob.glob("./thesis-api/algorithm/validation/*.csv")]
+
+	df = pd.concat(df_list, axis=0)
+
+	print(df["opt_execution_time"].mean(axis=0))
+    
 if __name__ == '__main__':
 	# plot_number_of_topics_hypervolume()
 	# barchart()
-	generate_word_clouds()
+	# generate_word_clouds()
 	# plot_performance_lda()
 	# plot_performance_opt()
 	# plot_performance_velocity()
 	# plot_hv_backlog()
 	# plot_hv_velocity()
 	# plot_opt_velocity_box()
+	print_average_optimization_time()
 	pass
