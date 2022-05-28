@@ -1,7 +1,7 @@
-import helpers.lda as lda
-import helpers.nsga2 as nsga2
+import algorithm.helpers.lda as lda
+import algorithm.helpers.nsga2 as nsga2
 import numpy as np
-import helpers.other_helpers as h
+import algorithm.helpers.other_helpers as h
 import gensim
 
 from pymoo.factory import get_decomposition

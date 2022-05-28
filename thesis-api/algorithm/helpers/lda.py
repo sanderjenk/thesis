@@ -4,6 +4,8 @@ from gensim.parsing.preprocessing import STOPWORDS
 from gensim.models import CoherenceModel
 from nltk.stem import WordNetLemmatizer, SnowballStemmer
 from nltk.stem.porter import *
+import nltk
+nltk.download('wordnet')
 import numpy as np
 
 # past and future tenses to present, third person to first person

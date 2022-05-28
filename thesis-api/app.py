@@ -1,25 +1,16 @@
 from flask import Flask, request, Response
 import pandas as pd
 import json
-from bson import json_util
 from flask_cors import CORS
-import numpy as np
 import sys
 from ast import literal_eval
+import algorithm.algorithm_for_app as alg
 
 pd.options.mode.chained_assignment = None  # default='warn'
-
-sys.path.insert(0, './algorithm')
-sys.path.insert(0, './algorithm/helpers')
-
-import algorithm.algorithm_for_app as alg
-import algorithm.helpers.preprocessing as pp
 
 app = Flask(__name__)
 
 CORS(app)
-
-
 
 dataset = pd.read_csv('./dataset/preprocessed_dataset.csv', encoding='utf-8')
 
@@ -86,7 +77,7 @@ def get_json(cursor, issues = False):
             doc.pop('resolution.name', None)
             doc.pop('sprint', None)
         
-        json_docs.append(json.dumps(doc, default=json_util.default))
+        json_docs.append(json.dumps(doc))
         
-    return json.dumps(json_docs, default=json_util.default)
+    return json.dumps(json_docs)
     

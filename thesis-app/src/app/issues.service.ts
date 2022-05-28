@@ -15,23 +15,7 @@ export class IssuesService {
 
   constructor(private http: HttpClient) { }
 
-  public baseUrl = "http://localhost:5000/api/";
-
-  getIssues(params: any) {
-    params.project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.get<string[]>(this.baseUrl + "issues", {params: params}).pipe(
-      map(x => x.map(y => 
-        {    
-          var issue = JSON.parse(y)
-          issue.priority = issue["priority.name"]
-          return issue;
-        })));
-  }
-
-  getIssuesCount(params: any) {
-    params.project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.get<number>(this.baseUrl + "issuescount", {params: params});
-  }
+  public baseUrl = "http://localhost/api/";
 
   getProjects() {
     return this.http.get<string[]>(this.baseUrl + "projects").pipe(
@@ -39,17 +23,17 @@ export class IssuesService {
   }
 
   getDevelopers() {
-    let project = this.selectedProjectSubject.value.toLowerCase();
+    let project = this.selectedProjectSubject.value;
     return this.http.get<string[]>(this.baseUrl + "developers" , {params: {project}});
     }
 
   generateReccommendations(storypoints: number, developer: string) {
-    let project = this.selectedProjectSubject.value.toLowerCase();
+    let project = this.selectedProjectSubject.value;
     return this.http.post<string[]>(this.baseUrl + "generate", {}, {params: {project, storypoints, username: developer}});
   }
 
   getVelocity(developer: string) {
-    let project = this.selectedProjectSubject.value.toLowerCase();
+    let project = this.selectedProjectSubject.value;
     return this.http.get<number>(this.baseUrl + "velocity", {params: {username: developer, project}})
   } 
 

@@ -14,7 +14,7 @@
 		<input matInput type="number" formControlName="storypoints">
 	</mat-form-field>
 	<button style="margin-bottom: 20px;" mat-flat-button color="primary"
-		(click)="generate()" [disabled]="!generateForm.valid">Find optimal issue reports
+		[disabled]="!generateForm.valid">Find optimal issue reports
 	</button>
 
 	<p>Your calculated number of issues for the next two week sprint is {{ velocity }}</p>
