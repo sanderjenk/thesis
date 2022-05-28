@@ -15,9 +15,11 @@ export class IssuesService {
 
   constructor(private http: HttpClient) { }
 
+  public baseUrl = "http://localhost:5000/api/";
+
   getIssues(params: any) {
     params.project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.get<string[]>("http://localhost:5000/api/issues", {params: params}).pipe(
+    return this.http.get<string[]>(this.baseUrl + "issues", {params: params}).pipe(
       map(x => x.map(y => 
         {    
           var issue = JSON.parse(y)
@@ -28,27 +30,27 @@ export class IssuesService {
 
   getIssuesCount(params: any) {
     params.project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.get<number>("http://localhost:5000/api/issuescount", {params: params});
+    return this.http.get<number>(this.baseUrl + "issuescount", {params: params});
   }
 
   getProjects() {
-    return this.http.get<string[]>("http://localhost:5000/api/projects").pipe(
+    return this.http.get<string[]>(this.baseUrl + "projects").pipe(
       map(x => x.map(y => JSON.parse(y))));
   }
 
   getDevelopers() {
     let project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.get<string[]>("http://localhost:5000/api/developers" , {params: {project}});
+    return this.http.get<string[]>(this.baseUrl + "developers" , {params: {project}});
     }
 
   generateReccommendations(storypoints: number, developer: string) {
     let project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.post<string[]>("http://localhost:5000/api/generate", {}, {params: {project, storypoints, username: developer}});
+    return this.http.post<string[]>(this.baseUrl + "generate", {}, {params: {project, storypoints, username: developer}});
   }
 
   getVelocity(developer: string) {
     let project = this.selectedProjectSubject.value.toLowerCase();
-    return this.http.get<number>("http://localhost:5000/api/velocity", {params: {username: developer, project}})
+    return this.http.get<number>(this.baseUrl + "velocity", {params: {username: developer, project}})
   } 
 
   selectProject(key: string) {
@@ -57,6 +59,6 @@ export class IssuesService {
   }
 
   submitFeedbackForm(data: any) {
-    return this.http.post("http://localhost:5000/api/feedback", data)
+    return this.http.post(this.baseUrl + "feedback", data)
   }
 }

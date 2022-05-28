@@ -17,6 +17,32 @@ export class SelectedIssuesComponent implements OnInit {
   generateForm: any;
   developers: string[] = []
   velocity: number = 0;
+  ffs: number[] = []
+
+  public radarChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    scales: {
+      r: {
+          angleLines: {
+              display: false
+          },
+          suggestedMin: 0,
+          suggestedMax: 3
+      },
+    }
+  };
+
+  radarChartLabels: string[] = [ 'Business value', 'Experience', 'Novelty'];
+
+  radarChartData: ChartData<'radar'> = {
+    labels: this.radarChartLabels,
+    datasets: [
+      { data: [], label: 'Objective values of the solution' }
+    ]
+  };
+  radarChartType: ChartType = 'radar';
+
+
   constructor(private issuesService: IssuesService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
@@ -25,6 +51,26 @@ export class SelectedIssuesComponent implements OnInit {
     this.getDevelopers();
   }
 
+  changeRadarChartData() {
+    this.radarChartData.datasets = [
+        { data: this.ffs, label: 'Objective values of the solution' }
+      ];
+  }
+
+  changeRadarChartOptions(velocity: number) {
+    this.radarChartOptions = {
+      responsive: true,
+      scales: {
+        r: {
+            angleLines: {
+                display: false
+            },
+            suggestedMin: 0,
+            suggestedMax: velocity
+        },
+      }
+    };
+  }
   
   initGenerateForm() {
     this.generateForm = new FormGroup({
@@ -48,7 +94,12 @@ export class SelectedIssuesComponent implements OnInit {
   generate() {
     this.showSpinner = true;
     this.issuesService.generatedIssuesSubject.next([]);
-    this.issuesService.generateReccommendations(this.generateForm.value.storypoints, this.generateForm.value.developer).subscribe((issues: any) => {
+    this.changeRadarChartOptions(this.generateForm.value.storypoints)
+    this.issuesService.generateReccommendations(this.generateForm.value.storypoints, this.generateForm.value.developer).subscribe((res: any) => {
+      let issues = JSON.parse(res.items);
+      let ffs = JSON.parse(res.ffs);
+      this.ffs = ffs.map((x: number)=> x * -1)
+      this.changeRadarChartData();
       this.issuesService.generatedIssuesSubject.next(issues);
       this.showSpinner = false;
     });
@@ -60,27 +111,4 @@ export class SelectedIssuesComponent implements OnInit {
       this.generateForm.controls.storypoints.setValue(velocity);
     })
   }
-
-  public radarChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    scales: {
-      r: {
-          angleLines: {
-              display: false
-          },
-          suggestedMin: 0,
-          suggestedMax: 3
-      },
-    }
-  };
-
-  public radarChartLabels: string[] = [ 'Business value', 'Experience', 'Novelty'];
-
-  public radarChartData: ChartData<'radar'> = {
-    labels: this.radarChartLabels,
-    datasets: [
-      { data: [2.25,2.99, 2], label: 'Objective values of the solution' }
-    ]
-  };
-  public radarChartType: ChartType = 'radar';
 }

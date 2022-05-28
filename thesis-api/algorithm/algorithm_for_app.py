@@ -1,5 +1,3 @@
-import pandas as pd
-import helpers.preprocessing as pp
 import helpers.lda as lda
 import helpers.nsga2 as nsga2
 import numpy as np

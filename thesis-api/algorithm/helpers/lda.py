@@ -4,8 +4,6 @@ from gensim.parsing.preprocessing import STOPWORDS
 from gensim.models import CoherenceModel
 from nltk.stem import WordNetLemmatizer, SnowballStemmer
 from nltk.stem.porter import *
-# import nltk
-# nltk.download('wordnet')
 import numpy as np
 
 # past and future tenses to present, third person to first person
@@ -18,9 +16,9 @@ def preprocess_words(text):
 
     result = []
 
-    for token in gensim.utils.simple_preprocess(text):
+    for token in simple_preprocess(text):
 
-        if token not in gensim.parsing.preprocessing.STOPWORDS and len(token) > 3:
+        if token not in STOPWORDS and len(token) > 3:
 
             result.append(lemmatize_stemming(token))
 
