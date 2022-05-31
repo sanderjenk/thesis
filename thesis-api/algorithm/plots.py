@@ -134,7 +134,7 @@ def plot_hv_backlog():
 		plt.annotate(label.upper(), (backloglist[i], hv[i]))
   
 	plt.xlabel("Number of backlog issues")
-	plt.ylabel("Optimization time in seconds")
+	plt.ylabel("Weighted average HV")
 	plt.savefig('./thesis-api/algorithm/validation/plots2/scatter_hv_backlog.png')
  
 def generate_word_clouds():
@@ -168,6 +168,13 @@ def print_average_optimization_time():
 	df = pd.concat(df_list, axis=0)
 
 	print(df["opt_execution_time"].mean(axis=0))
+ 
+def print_average_lda_time():
+	df_list = [pd.read_csv(filename).iloc[0] for filename in glob.glob("./thesis-api/algorithm/validation/*.csv")]
+
+	df = pd.concat(df_list, axis=0)
+
+	print(df["lda_execution_time"].mean(axis=0))
     
 if __name__ == '__main__':
 	# plot_number_of_topics_hypervolume()
@@ -179,5 +186,6 @@ if __name__ == '__main__':
 	# plot_hv_backlog()
 	# plot_hv_velocity()
 	# plot_opt_velocity_box()
-	print_average_optimization_time()
+	# print_average_optimization_time()
+	# print_average_lda_time()
 	pass
